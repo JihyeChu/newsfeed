@@ -2,7 +2,9 @@ package com.sparta.newsfeed.user.service;
 
 import com.sparta.newsfeed.common.exception.BusinessException;
 import com.sparta.newsfeed.common.exception.ErrorCode;
+import com.sparta.newsfeed.user.dto.req.ReqUserPostLoginDTO;
 import com.sparta.newsfeed.user.dto.req.ReqUserPostSignupDTO;
+import com.sparta.newsfeed.user.dto.res.ResUserPostLoginDTO;
 import com.sparta.newsfeed.user.dto.res.ResUserPostSignupDTO;
 import com.sparta.newsfeed.user.entity.UserEntity;
 import com.sparta.newsfeed.user.entity.UserRole;
@@ -39,7 +41,7 @@ public class UserService {
     }
 
     private void checkNicknameDuplication(String nickname) {
-        Optional<UserEntity> optionalUserEntity = userRepository.findByNickname(nickname);
+        Optional<UserEntity> optionalUserEntity = userRepository.findByNicknameAndDeletedAtNull(nickname);
         if (optionalUserEntity.isPresent()) {
             throw new BusinessException(ErrorCode.DUPLICATE_NICKNAME);
         }
