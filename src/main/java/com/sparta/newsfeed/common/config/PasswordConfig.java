@@ -1,4 +1,4 @@
-package com.sparta.newsfeed.common.utils;
+package com.sparta.newsfeed.common.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
