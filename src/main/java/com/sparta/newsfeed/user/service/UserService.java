@@ -2,6 +2,7 @@ package com.sparta.newsfeed.user.service;
 
 import com.sparta.newsfeed.common.exception.BusinessException;
 import com.sparta.newsfeed.common.exception.ErrorCode;
+import com.sparta.newsfeed.common.utils.JwtUtil;
 import com.sparta.newsfeed.user.dto.req.ReqUserPostLoginDTO;
 import com.sparta.newsfeed.user.dto.req.ReqUserPostSignupDTO;
 import com.sparta.newsfeed.user.dto.res.ResUserPostLoginDTO;
@@ -21,6 +22,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
 
+    private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
 
@@ -40,10 +42,30 @@ public class UserService {
         return ResUserPostSignupDTO.of(userRepository.save(userEntityForSaving));
     }
 
-    private void checkNicknameDuplication(String nickname) {
-        Optional<UserEntity> optionalUserEntity = userRepository.findByNicknameAndDeletedAtNull(nickname);
-        if (optionalUserEntity.isPresent()) {
-            throw new BusinessException(ErrorCode.DUPLICATE_NICKNAME);
+    @Transactional
+    public ResUserPostLoginDTO login(@Valid ReqUserPostLoginDTO dto) {
+
+        UserEntity userEntity = getUserEntityOptionalByNickname(dto.getNickname()).orElseThrow(
+                () -> new BusinessException(ErrorCode.NOT_FOUND_USER)
+        );
+
+        if(!passwordEncoder.matches(dto.getPassword(), userEntity.getPassword())){
+            throw new BusinessException(ErrorCode.INVALID_PASSWORD);
         }
+
+        String jwtToken = jwtUtil.generateToken(userEntity.getNickname(), userEntity.getRole());
+
+        return ResUserPostLoginDTO.of(jwtToken);
+    }
+
+    private void checkNicknameDuplication(String nickname) {
+        getUserEntityOptionalByNickname(nickname)
+                .ifPresent(user -> {
+            throw new BusinessException(ErrorCode.DUPLICATE_NICKNAME);
+        });
+    }
+
+    private Optional<UserEntity> getUserEntityOptionalByNickname(String nickname) {
+        return userRepository.findByNicknameAndDeletedAtNull(nickname);
     }
 }

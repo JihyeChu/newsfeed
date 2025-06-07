@@ -8,7 +8,9 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum ErrorCode {
 
-    DUPLICATE_NICKNAME(HttpStatus.CONFLICT, 40901, "이미 사용중인 아이디 입니다.");
+    DUPLICATE_NICKNAME(HttpStatus.CONFLICT, 40901, "이미 사용중인 아이디 입니다."),
+    NOT_FOUND_USER(HttpStatus.NOT_FOUND, 40401, "아이디가 존재하지 않습니다."),
+    INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, 40101, "비밀번호가 일치하지 않습니다.");
 
     private final HttpStatus httpStatus;
     private final Integer code;

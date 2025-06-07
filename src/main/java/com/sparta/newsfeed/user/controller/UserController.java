@@ -2,6 +2,8 @@ package com.sparta.newsfeed.user.controller;
 
 import com.sparta.newsfeed.common.dto.ResDTO;
 import com.sparta.newsfeed.user.controller.docs.UserControllerSwagger;
+import com.sparta.newsfeed.user.dto.req.ReqUserPostLoginDTO;
+import com.sparta.newsfeed.user.dto.res.ResUserPostLoginDTO;
 import com.sparta.newsfeed.user.dto.res.ResUserPostSignupDTO;
 import com.sparta.newsfeed.user.service.UserService;
 import com.sparta.newsfeed.user.dto.req.ReqUserPostSignupDTO;
@@ -24,6 +26,7 @@ public class UserController implements UserControllerSwagger {
     @PostMapping("/signup")
     public ResponseEntity<ResDTO<ResUserPostSignupDTO>> signup(@Valid @RequestBody ReqUserPostSignupDTO dto) {
 
+        System.out.println("1");
         return new ResponseEntity<>(
                 ResDTO.<ResUserPostSignupDTO>builder()
                         .code(HttpStatus.CREATED.value())
@@ -34,4 +37,16 @@ public class UserController implements UserControllerSwagger {
         );
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<ResDTO<ResUserPostLoginDTO>> login(@Valid @RequestBody ReqUserPostLoginDTO dto) {
+
+        return new ResponseEntity<>(
+                ResDTO.<ResUserPostLoginDTO>builder()
+                        .code(HttpStatus.OK.value())
+                        .message("로그인 되었습니다.")
+                        .data(userService.login(dto))
+                        .build(),
+                HttpStatus.OK
+        );
+    }
 }
