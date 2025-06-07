@@ -1,7 +1,9 @@
 package com.sparta.newsfeed.user.controller.docs;
 
 import com.sparta.newsfeed.common.dto.ResDTO;
+import com.sparta.newsfeed.user.dto.req.ReqUserPostLoginDTO;
 import com.sparta.newsfeed.user.dto.req.ReqUserPostSignupDTO;
+import com.sparta.newsfeed.user.dto.res.ResUserPostLoginDTO;
 import com.sparta.newsfeed.user.dto.res.ResUserPostSignupDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -26,5 +28,14 @@ public interface UserControllerSwagger {
     })
     @PostMapping("/signup")
     ResponseEntity<ResDTO<ResUserPostSignupDTO>> signup(@Valid @RequestBody ReqUserPostSignupDTO dto);
+
+    @Operation(summary = "로그인", description = "로그인을 하는 API 입니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "로그인 성공", content = @Content(schema = @Schema(implementation = ResDTO.class))),
+            @ApiResponse(responseCode = "400", description = "로그인 실패.", content = @Content(schema = @Schema(implementation = ResDTO.class)))
+    })
+    @PostMapping("/login")
+    ResponseEntity<ResDTO<ResUserPostLoginDTO>> login(@Valid @RequestBody ReqUserPostLoginDTO dto);
+
 
 }
