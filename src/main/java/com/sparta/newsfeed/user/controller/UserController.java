@@ -3,18 +3,16 @@ package com.sparta.newsfeed.user.controller;
 import com.sparta.newsfeed.common.dto.ResDTO;
 import com.sparta.newsfeed.user.controller.docs.UserControllerSwagger;
 import com.sparta.newsfeed.user.dto.req.ReqUserPostLoginDTO;
+import com.sparta.newsfeed.user.dto.req.ReqUserPostSignupDTO;
+import com.sparta.newsfeed.user.dto.res.ResUserGetProfileDTO;
 import com.sparta.newsfeed.user.dto.res.ResUserPostLoginDTO;
 import com.sparta.newsfeed.user.dto.res.ResUserPostSignupDTO;
 import com.sparta.newsfeed.user.service.UserService;
-import com.sparta.newsfeed.user.dto.req.ReqUserPostSignupDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,7 +24,6 @@ public class UserController implements UserControllerSwagger {
     @PostMapping("/signup")
     public ResponseEntity<ResDTO<ResUserPostSignupDTO>> signup(@Valid @RequestBody ReqUserPostSignupDTO dto) {
 
-        System.out.println("1");
         return new ResponseEntity<>(
                 ResDTO.<ResUserPostSignupDTO>builder()
                         .code(HttpStatus.CREATED.value())
@@ -45,6 +42,19 @@ public class UserController implements UserControllerSwagger {
                         .code(HttpStatus.OK.value())
                         .message("로그인 되었습니다.")
                         .data(userService.login(dto))
+                        .build(),
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ResDTO<ResUserGetProfileDTO>> getUserById(@PathVariable Long id) {
+
+        return new ResponseEntity<>(
+                ResDTO.<ResUserGetProfileDTO>builder()
+                        .code(HttpStatus.OK.value())
+                        .message("프로필 조회에 성공하였습니다.")
+                        .data(userService.getUserById(id))
                         .build(),
                 HttpStatus.OK
         );
