@@ -6,6 +6,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.io.IOException;
 
@@ -20,7 +22,6 @@ public class JwtFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
         String requestURI = httpRequest.getRequestURI();
-        String nickname = null;
         String jwt = null;
 
         String authorizationHeader = httpRequest.getHeader("Authorization");
@@ -38,29 +39,12 @@ public class JwtFilter implements Filter {
 
         jwt = authorizationHeader.substring(7);
 
-        if (!jwtUtil.validateToken(jwt)) {
-            httpResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            httpResponse.getWriter().write("{\"error\": \"Unauthorized\"}");
-        }
+        if (jwtUtil.validateToken(jwt)) {
+            // 토큰으로부터 인증 정보(Authentication) 객체 생성
+            Authentication authentication = jwtUtil.getAuthentication(jwt);
 
-        nickname = jwtUtil.extractNickname(jwt);
-
-        if (requestURI.startsWith("/api/admin")) {
-            if (jwtUtil.hasRole(jwt, "ADMIN")) {
-                chain.doFilter(request, response);
-            } else {
-                httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, "접근 권한이 없습니다.");
-            }
-            return;
-        }
-
-        if (requestURI.startsWith("/api/users")) {
-            if (jwtUtil.hasRole(jwt, "USER")) {
-                chain.doFilter(request, response);
-            } else {
-                httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, "접근 권한이 없습니다.");
-            }
-            return;
+            // SecurityContext에 인증 정보를 저장해, 이후 인증된 사용자로 인식되도록 함
+            SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 
         chain.doFilter(request, response);
