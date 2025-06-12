@@ -1,9 +1,10 @@
 package com.sparta.newsfeed.user.controller.docs;
 
 import com.sparta.newsfeed.common.dto.ResDTO;
+import com.sparta.newsfeed.user.dto.req.ReqUserDeleteAccountDTO;
 import com.sparta.newsfeed.user.dto.req.ReqUserPostLoginDTO;
 import com.sparta.newsfeed.user.dto.req.ReqUserPostSignupDTO;
-import com.sparta.newsfeed.user.dto.req.ResUserPatchProfileDTO;
+import com.sparta.newsfeed.user.dto.req.ReqUserPatchProfileDTO;
 import com.sparta.newsfeed.user.dto.res.ResUserGetProfileDTO;
 import com.sparta.newsfeed.user.dto.res.ResUserPostLoginDTO;
 import com.sparta.newsfeed.user.dto.res.ResUserPostSignupDTO;
@@ -53,5 +54,13 @@ public interface UserControllerSwagger {
             @ApiResponse(responseCode = "400", description = "프로필 수정 실패", content = @Content(schema = @Schema(implementation = ResDTO.class)))
     })
     @PatchMapping("/me")
-    ResponseEntity<ResDTO<Object>> updateProfile(@Valid @RequestBody ResUserPatchProfileDTO dto, @AuthenticationPrincipal CustomUserDetails userDetails);
+    ResponseEntity<ResDTO<Object>> updateProfile(@Valid @RequestBody ReqUserPatchProfileDTO dto, @AuthenticationPrincipal CustomUserDetails userDetails);
+
+    @Operation(summary = "회원 탈퇴", description = "회원 탈퇴 하는 API 입니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "회원 탈퇴 성공", content = @Content(schema = @Schema(implementation = ResDTO.class))),
+            @ApiResponse(responseCode = "400", description = "회원 탈퇴 실패", content = @Content(schema = @Schema(implementation = ResDTO.class)))
+    })
+    @DeleteMapping("/me")
+    ResponseEntity<ResDTO<Object>> deleteAccount(@Valid @RequestBody ReqUserDeleteAccountDTO dto, @AuthenticationPrincipal CustomUserDetails userDetails);
 }
