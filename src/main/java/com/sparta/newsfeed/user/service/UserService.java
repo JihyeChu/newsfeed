@@ -3,9 +3,10 @@ package com.sparta.newsfeed.user.service;
 import com.sparta.newsfeed.common.exception.BusinessException;
 import com.sparta.newsfeed.common.exception.ErrorCode;
 import com.sparta.newsfeed.common.utils.JwtUtil;
+import com.sparta.newsfeed.user.dto.req.ReqUserDeleteAccountDTO;
 import com.sparta.newsfeed.user.dto.req.ReqUserPostLoginDTO;
 import com.sparta.newsfeed.user.dto.req.ReqUserPostSignupDTO;
-import com.sparta.newsfeed.user.dto.req.ResUserPatchProfileDTO;
+import com.sparta.newsfeed.user.dto.req.ReqUserPatchProfileDTO;
 import com.sparta.newsfeed.user.dto.res.ResUserGetProfileDTO;
 import com.sparta.newsfeed.user.dto.res.ResUserPostLoginDTO;
 import com.sparta.newsfeed.user.dto.res.ResUserPostSignupDTO;
@@ -70,7 +71,7 @@ public class UserService {
     }
 
     @Transactional
-    public void updateProfile(@Valid ResUserPatchProfileDTO dto, Long id) {
+    public void updateProfile(@Valid ReqUserPatchProfileDTO dto, Long id) {
         UserEntity userEntityForUpdate = userRepository.findById(id).orElseThrow(
                 () -> new BusinessException(ErrorCode.NOT_FOUND_USER)
         );
@@ -107,6 +108,19 @@ public class UserService {
         if (dto.getEmail() != null) {
             userEntityForUpdate.changeEmail(dto.getEmail());
         }
+    }
+
+    @Transactional
+    public void deleteAccount(ReqUserDeleteAccountDTO dto, Long id) {
+        UserEntity userEntityForDelete = userRepository.findById(id).orElseThrow(
+                () -> new BusinessException(ErrorCode.NOT_FOUND_USER)
+        );
+
+        if (!passwordEncoder.matches(dto.getCurrentPassword(), userEntityForDelete.getPassword())) {
+            throw new BusinessException(ErrorCode.INVALID_CURRENT_PASSWORD);
+        }
+
+        userEntityForDelete.markAsDeleted(userEntityForDelete.getNickname());
     }
 
     private void checkNicknameDuplication(String nickname) {
