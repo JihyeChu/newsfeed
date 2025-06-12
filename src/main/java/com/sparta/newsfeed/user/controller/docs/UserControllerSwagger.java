@@ -3,9 +3,11 @@ package com.sparta.newsfeed.user.controller.docs;
 import com.sparta.newsfeed.common.dto.ResDTO;
 import com.sparta.newsfeed.user.dto.req.ReqUserPostLoginDTO;
 import com.sparta.newsfeed.user.dto.req.ReqUserPostSignupDTO;
+import com.sparta.newsfeed.user.dto.req.ResUserPatchProfileDTO;
 import com.sparta.newsfeed.user.dto.res.ResUserGetProfileDTO;
 import com.sparta.newsfeed.user.dto.res.ResUserPostLoginDTO;
 import com.sparta.newsfeed.user.dto.res.ResUserPostSignupDTO;
+import com.sparta.newsfeed.user.security.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -14,6 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "User", description = "회원가입, 로그인 인증 등 인증 관련 API를 제공합니다.")
@@ -43,4 +46,12 @@ public interface UserControllerSwagger {
     })
     @GetMapping("/{id}")
     ResponseEntity<ResDTO<ResUserGetProfileDTO>> getUserById(@PathVariable Long id);
+
+    @Operation(summary = "프로필 수정", description = "프로필을 수정 하는 API 입니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "프로필 수정 성공", content = @Content(schema = @Schema(implementation = ResDTO.class))),
+            @ApiResponse(responseCode = "400", description = "프로필 수정 실패", content = @Content(schema = @Schema(implementation = ResDTO.class)))
+    })
+    @PatchMapping("/{id}")
+    ResponseEntity<ResDTO<Object>> updateProfile(@PathVariable Long id, @Valid @RequestBody ResUserPatchProfileDTO dto, @AuthenticationPrincipal CustomUserDetails userDetails);
 }
