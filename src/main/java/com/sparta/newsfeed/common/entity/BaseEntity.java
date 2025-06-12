@@ -44,9 +44,13 @@ public abstract class BaseEntity {
 
     private String deletedBy;
 
-    public void markAsDeleted(String username) {
+    @Column(name = "is_deleted", nullable = false)
+    private boolean isDeleted = false;
+
+    public void markAsDeleted(String nickname) {
         deletedAt = LocalDateTime.now();
-        deletedBy = username;
+        deletedBy = nickname;
+        isDeleted = true;
     }
 
 }
