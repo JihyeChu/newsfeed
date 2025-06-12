@@ -52,6 +52,6 @@ public interface UserControllerSwagger {
             @ApiResponse(responseCode = "200", description = "프로필 수정 성공", content = @Content(schema = @Schema(implementation = ResDTO.class))),
             @ApiResponse(responseCode = "400", description = "프로필 수정 실패", content = @Content(schema = @Schema(implementation = ResDTO.class)))
     })
-    @PatchMapping("/{id}")
-    ResponseEntity<ResDTO<Object>> updateProfile(@PathVariable Long id, @Valid @RequestBody ResUserPatchProfileDTO dto, @AuthenticationPrincipal CustomUserDetails userDetails);
+    @PatchMapping("/me")
+    ResponseEntity<ResDTO<Object>> updateProfile(@Valid @RequestBody ResUserPatchProfileDTO dto, @AuthenticationPrincipal CustomUserDetails userDetails);
 }

@@ -70,13 +70,8 @@ public class UserService {
     }
 
     @Transactional
-    public void updateProfile(Long pathUserId, @Valid ResUserPatchProfileDTO dto, Long loginUserId) {
-        // 본인 프로필만 수정 가능
-        if (!pathUserId.equals(loginUserId)) {
-            throw new BusinessException(ErrorCode.FORBIDDEN_USER_UPDATE);
-        }
-
-        UserEntity userEntityForUpdate = userRepository.findById(pathUserId).orElseThrow(
+    public void updateProfile(@Valid ResUserPatchProfileDTO dto, Long id) {
+        UserEntity userEntityForUpdate = userRepository.findById(id).orElseThrow(
                 () -> new BusinessException(ErrorCode.NOT_FOUND_USER)
         );
 

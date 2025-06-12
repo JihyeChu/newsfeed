@@ -63,10 +63,10 @@ public class UserController implements UserControllerSwagger {
         );
     }
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<ResDTO<Object>> updateProfile(@PathVariable Long id, @Valid @RequestBody ResUserPatchProfileDTO dto, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    @PatchMapping("/me")
+    public ResponseEntity<ResDTO<Object>> updateProfile(@Valid @RequestBody ResUserPatchProfileDTO dto, @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        userService.updateProfile(id, dto, userDetails.getUserEntity().getId());
+        userService.updateProfile(dto, userDetails.getUserEntity().getId());
 
         return new ResponseEntity<>(
                 ResDTO.<Object>builder()
