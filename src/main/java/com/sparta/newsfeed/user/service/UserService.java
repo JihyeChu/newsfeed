@@ -5,6 +5,7 @@ import com.sparta.newsfeed.common.exception.ErrorCode;
 import com.sparta.newsfeed.common.utils.JwtUtil;
 import com.sparta.newsfeed.user.dto.req.ReqUserPostLoginDTO;
 import com.sparta.newsfeed.user.dto.req.ReqUserPostSignupDTO;
+import com.sparta.newsfeed.user.dto.req.ResUserPatchProfileDTO;
 import com.sparta.newsfeed.user.dto.res.ResUserGetProfileDTO;
 import com.sparta.newsfeed.user.dto.res.ResUserPostLoginDTO;
 import com.sparta.newsfeed.user.dto.res.ResUserPostSignupDTO;
@@ -51,7 +52,7 @@ public class UserService {
         );
 
         if (!passwordEncoder.matches(dto.getPassword(), userEntity.getPassword())) {
-            throw new BusinessException(ErrorCode.INVALID_PASSWORD);
+            throw new BusinessException(ErrorCode.INVALID_CURRENT_PASSWORD);
         }
 
         String jwtToken = jwtUtil.generateToken(userEntity.getNickname());
@@ -66,6 +67,51 @@ public class UserService {
         );
 
         return ResUserGetProfileDTO.of(userEntity);
+    }
+
+    @Transactional
+    public void updateProfile(Long pathUserId, @Valid ResUserPatchProfileDTO dto, Long loginUserId) {
+        // 본인 프로필만 수정 가능
+        if (!pathUserId.equals(loginUserId)) {
+            throw new BusinessException(ErrorCode.FORBIDDEN_USER_UPDATE);
+        }
+
+        UserEntity userEntityForUpdate = userRepository.findById(pathUserId).orElseThrow(
+                () -> new BusinessException(ErrorCode.NOT_FOUND_USER)
+        );
+
+        // 1. 비밀번호 변경 요청이 있는지 확인
+        if (dto.getNewPassword() != null || dto.getCurrentPassword() != null) {
+            // 1-1. 만약 비밀번호 수정을 희망한다면 현재 비밀번호(입력값)가 null 또는 빈 값이면 예외
+            if (dto.getCurrentPassword() == null) {
+                throw new BusinessException(ErrorCode.REQUIRED_CURRENT_PASSWORD);
+            }
+            // 1-2. 현재 비밀번호가 실제 비밀번호와 일치하는지 확인
+            if (!passwordEncoder.matches(dto.getCurrentPassword(), userEntityForUpdate.getPassword())) {
+                throw new BusinessException(ErrorCode.INVALID_CURRENT_PASSWORD);
+            }
+            // 1-3. 새 비밀번호가 기존 비밀번호와 동일한지 확인
+            if (passwordEncoder.matches(dto.getNewPassword(), userEntityForUpdate.getPassword())) {
+                throw new BusinessException(ErrorCode.SAME_AS_OLD_PASSWORD);
+            }
+
+            // 1-4. 비밀번호 변경
+            userEntityForUpdate.changePassword(passwordEncoder.encode(dto.getNewPassword()));
+        }
+
+        if (dto.getNickname() != null) {
+            checkNicknameDuplication(dto.getNickname());
+            userEntityForUpdate.changeNickname(dto.getNickname());
+        }
+
+        if (dto.getUsername() != null) {
+            checkNicknameDuplication(dto.getUsername());
+            userEntityForUpdate.changeUsername(dto.getUsername());
+        }
+
+        if (dto.getEmail() != null) {
+            userEntityForUpdate.changeEmail(dto.getEmail());
+        }
     }
 
     private void checkNicknameDuplication(String nickname) {

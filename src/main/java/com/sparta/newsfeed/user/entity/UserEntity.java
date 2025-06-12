@@ -52,4 +52,20 @@ public class UserEntity extends BaseEntity {
                 .role(role)
                 .build();
     }
+
+    public void changePassword(String newPassword) {
+        this.password = newPassword;
+    }
+
+    public void changeNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void changeUsername(String username) {
+        this.username = username;
+    }
+
+    public void changeEmail(String email) {
+        this.email = email;
+    }
 }
