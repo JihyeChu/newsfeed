@@ -1,11 +1,15 @@
 package com.sparta.newsfeed.user.entity;
 
 import com.sparta.newsfeed.common.entity.BaseEntity;
+import com.sparta.newsfeed.post.entity.PostEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -33,6 +37,9 @@ public class UserEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
     private UserRole role;
+
+    @OneToMany(mappedBy = "user", orphanRemoval = true)
+    private List<PostEntity> postList = new ArrayList<>();
 
     @Builder
     public UserEntity(String nickname, String password, String username, String email, UserRole role) {
