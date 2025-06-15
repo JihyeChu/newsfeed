@@ -2,6 +2,7 @@ package com.sparta.newsfeed.post.controller.docs;
 
 import com.sparta.newsfeed.common.dto.ResDTO;
 import com.sparta.newsfeed.post.dto.req.ReqPostCreateDTO;
+import com.sparta.newsfeed.post.dto.req.ReqPostPatchDTO;
 import com.sparta.newsfeed.post.dto.res.ResPostListDTO;
 import com.sparta.newsfeed.post.res.ResPostCreateDTO;
 import com.sparta.newsfeed.user.security.CustomUserDetails;
@@ -37,4 +38,12 @@ public interface PostControllerSwagger {
     })
     @GetMapping
     ResponseEntity<ResDTO<List<ResPostListDTO>>> getPostList(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size);
+
+    @Operation(summary = "게시글 수정", description = "게시글을 수정 하는 API 입니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "게시글 수정 성공", content = @Content(schema = @Schema(implementation = ResDTO.class))),
+            @ApiResponse(responseCode = "400", description = "게시글 수정 실패", content = @Content(schema = @Schema(implementation = ResDTO.class)))
+    })
+    @PatchMapping("/{id}")
+    ResponseEntity<ResDTO<Object>> updatePost(@Valid @RequestBody ReqPostPatchDTO dto, @PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails);
 }
