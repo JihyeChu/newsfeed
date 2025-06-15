@@ -3,6 +3,7 @@ package com.sparta.newsfeed.post.controller;
 import com.sparta.newsfeed.common.dto.ResDTO;
 import com.sparta.newsfeed.post.controller.docs.PostControllerSwagger;
 import com.sparta.newsfeed.post.dto.req.ReqPostCreateDTO;
+import com.sparta.newsfeed.post.dto.req.ReqPostPatchDTO;
 import com.sparta.newsfeed.post.dto.res.ResPostListDTO;
 import com.sparta.newsfeed.post.res.ResPostCreateDTO;
 import com.sparta.newsfeed.post.service.PostService;
@@ -43,6 +44,20 @@ public class PostController implements PostControllerSwagger {
                         .message("게시글 조회에 성공하였습니다.")
                         .code(HttpStatus.OK.value())
                         .data(postService.getPostList(page, size))
+                        .build(),
+                HttpStatus.OK
+        );
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<ResDTO<Object>> updatePost(@Valid @RequestBody ReqPostPatchDTO dto, @PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+        postService.updatePost(dto, id, userDetails.getUserEntity().getId());
+
+        return new ResponseEntity<>(
+                ResDTO.<Object>builder()
+                        .message("게시글 수정에 성공하였습니다.")
+                        .code(HttpStatus.OK.value())
                         .build(),
                 HttpStatus.OK
         );

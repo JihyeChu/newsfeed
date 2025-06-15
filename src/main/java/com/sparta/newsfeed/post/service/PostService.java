@@ -3,12 +3,14 @@ package com.sparta.newsfeed.post.service;
 import com.sparta.newsfeed.common.exception.BusinessException;
 import com.sparta.newsfeed.common.exception.ErrorCode;
 import com.sparta.newsfeed.post.dto.req.ReqPostCreateDTO;
+import com.sparta.newsfeed.post.dto.req.ReqPostPatchDTO;
 import com.sparta.newsfeed.post.dto.res.ResPostListDTO;
 import com.sparta.newsfeed.post.entity.PostEntity;
 import com.sparta.newsfeed.post.repository.PostRepository;
 import com.sparta.newsfeed.post.res.ResPostCreateDTO;
 import com.sparta.newsfeed.user.entity.UserEntity;
 import com.sparta.newsfeed.user.repository.UserRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -49,5 +51,27 @@ public class PostService {
         return postEntityList.stream()
                 .map(ResPostListDTO::of)
                 .collect(Collectors.toList());
+    }
+
+    public void updatePost(@Valid ReqPostPatchDTO dto, Long id, Long userId) {
+        UserEntity userEntity = userRepository.findById(userId).orElseThrow(
+                () -> new BusinessException(ErrorCode.NOT_FOUND_USER)
+        );
+
+        PostEntity postEntityForUpdate = postRepository.findById(id).orElseThrow(
+                () -> new BusinessException(ErrorCode.NOT_FOUND_POST)
+        );
+
+        if (!userEntity.getId().equals(postEntityForUpdate.getUser().getId())) {
+            throw new BusinessException(ErrorCode.FORBIDDEN_POST_UPDATE);
+        }
+
+        if (dto.getTitle() != null) {
+            postEntityForUpdate.changeTitle(dto.getTitle());
+        }
+
+        if (dto.getContent() != null) {
+            postEntityForUpdate.changeContent(dto.getContent());
+        }
     }
 }
