@@ -54,15 +54,11 @@ public class PostService {
     }
 
     public void updatePost(@Valid ReqPostPatchDTO dto, Long id, Long userId) {
-        UserEntity userEntity = userRepository.findById(userId).orElseThrow(
-                () -> new BusinessException(ErrorCode.NOT_FOUND_USER)
-        );
-
         PostEntity postEntityForUpdate = postRepository.findById(id).orElseThrow(
                 () -> new BusinessException(ErrorCode.NOT_FOUND_POST)
         );
 
-        if (!userEntity.getId().equals(postEntityForUpdate.getUser().getId())) {
+        if (!userId.equals(postEntityForUpdate.getUser().getId())) {
             throw new BusinessException(ErrorCode.FORBIDDEN_POST_UPDATE);
         }
 
