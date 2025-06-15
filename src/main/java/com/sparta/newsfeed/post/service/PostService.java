@@ -54,6 +54,7 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void updatePost(@Valid ReqPostPatchDTO dto, Long id, Long userId) {
         PostEntity postEntityForUpdate = postRepository.findById(id).orElseThrow(
                 () -> new BusinessException(ErrorCode.NOT_FOUND_POST)
