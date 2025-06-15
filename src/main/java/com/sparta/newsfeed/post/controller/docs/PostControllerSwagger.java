@@ -46,4 +46,12 @@ public interface PostControllerSwagger {
     })
     @PatchMapping("/{id}")
     ResponseEntity<ResDTO<Object>> updatePost(@Valid @RequestBody ReqPostPatchDTO dto, @PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails);
+
+    @Operation(summary = "게시글 삭제", description = "게시글을 삭제 하는 API 입니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "게시글 삭제 성공", content = @Content(schema = @Schema(implementation = ResDTO.class))),
+            @ApiResponse(responseCode = "400", description = "게시글 삭제 실패", content = @Content(schema = @Schema(implementation = ResDTO.class)))
+    })
+    @DeleteMapping("/{id}")
+    ResponseEntity<ResDTO<Object>> deletePost(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails);
 }
