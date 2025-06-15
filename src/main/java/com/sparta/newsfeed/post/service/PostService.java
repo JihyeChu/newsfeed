@@ -44,6 +44,7 @@ public class PostService {
         return ResPostCreateDTO.of(postRepository.save(postEntityForSaving));
     }
 
+    @Transactional(readOnly = true)
     public List<ResPostListDTO> getPostList(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<PostEntity> postEntityList = postRepository.findAll(pageable);
