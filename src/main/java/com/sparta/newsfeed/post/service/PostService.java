@@ -72,4 +72,17 @@ public class PostService {
             postEntityForUpdate.changeContent(dto.getContent());
         }
     }
+
+    @Transactional
+    public void deletePost(Long id, Long userId) {
+        PostEntity postEntityForDelete = postRepository.findById(id).orElseThrow(
+                () -> new BusinessException(ErrorCode.NOT_FOUND_POST)
+        );
+
+        if (!userId.equals(postEntityForDelete.getUser().getId())) {
+            throw new BusinessException(ErrorCode.FORBIDDEN_POST_DELETE);
+        }
+
+        postEntityForDelete.markAsDeleted(postEntityForDelete.getUser().getNickname());
+    }
 }

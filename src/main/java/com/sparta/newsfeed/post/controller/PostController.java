@@ -51,7 +51,6 @@ public class PostController implements PostControllerSwagger {
 
     @PatchMapping("/{id}")
     public ResponseEntity<ResDTO<Object>> updatePost(@Valid @RequestBody ReqPostPatchDTO dto, @PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
-
         postService.updatePost(dto, id, userDetails.getUserEntity().getId());
 
         return new ResponseEntity<>(
@@ -62,4 +61,19 @@ public class PostController implements PostControllerSwagger {
                 HttpStatus.OK
         );
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ResDTO<Object>> deletePost(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        postService.deletePost(id, userDetails.getUserEntity().getId());
+
+        return new ResponseEntity<>(
+                ResDTO.<Object>builder()
+                        .message("게시글 삭제에 성공하였습니다.")
+                        .code(HttpStatus.OK.value())
+                        .build(),
+                HttpStatus.OK
+        );
+    }
+
+
 }
