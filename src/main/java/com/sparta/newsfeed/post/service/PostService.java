@@ -7,7 +7,7 @@ import com.sparta.newsfeed.post.dto.req.ReqPostPatchDTO;
 import com.sparta.newsfeed.post.dto.res.ResPostListDTO;
 import com.sparta.newsfeed.post.entity.PostEntity;
 import com.sparta.newsfeed.post.repository.PostRepository;
-import com.sparta.newsfeed.post.res.ResPostCreateDTO;
+import com.sparta.newsfeed.post.dto.res.ResPostCreateDTO;
 import com.sparta.newsfeed.user.entity.UserEntity;
 import com.sparta.newsfeed.user.repository.UserRepository;
 import jakarta.validation.Valid;

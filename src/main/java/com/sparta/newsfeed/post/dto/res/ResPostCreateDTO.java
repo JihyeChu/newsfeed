@@ -1,4 +1,4 @@
-package com.sparta.newsfeed.post.res;
+package com.sparta.newsfeed.post.dto.res;
 
 import com.sparta.newsfeed.post.entity.PostEntity;
 import lombok.AllArgsConstructor;

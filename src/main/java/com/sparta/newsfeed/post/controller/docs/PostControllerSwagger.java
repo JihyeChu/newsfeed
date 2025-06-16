@@ -4,7 +4,7 @@ import com.sparta.newsfeed.common.dto.ResDTO;
 import com.sparta.newsfeed.post.dto.req.ReqPostCreateDTO;
 import com.sparta.newsfeed.post.dto.req.ReqPostPatchDTO;
 import com.sparta.newsfeed.post.dto.res.ResPostListDTO;
-import com.sparta.newsfeed.post.res.ResPostCreateDTO;
+import com.sparta.newsfeed.post.dto.res.ResPostCreateDTO;
 import com.sparta.newsfeed.user.security.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
