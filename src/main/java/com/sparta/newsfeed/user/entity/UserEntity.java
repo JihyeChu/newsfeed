@@ -1,6 +1,7 @@
 package com.sparta.newsfeed.user.entity;
 
 import com.sparta.newsfeed.common.entity.BaseEntity;
+import com.sparta.newsfeed.follow.entity.FollowEntity;
 import com.sparta.newsfeed.post.entity.PostEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -40,6 +41,12 @@ public class UserEntity extends BaseEntity {
 
     @OneToMany(mappedBy = "user", orphanRemoval = true)
     private List<PostEntity> postList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "follower", orphanRemoval = true)
+    private List<FollowEntity> following = new ArrayList<>();
+
+    @OneToMany(mappedBy = "followee", orphanRemoval = true)
+    private List<FollowEntity> followers = new ArrayList<>();
 
     @Builder
     public UserEntity(String nickname, String password, String username, String email, UserRole role) {
