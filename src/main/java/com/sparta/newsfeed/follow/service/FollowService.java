@@ -34,4 +34,17 @@ public class FollowService {
 
         followRepository.save(followEntityForSaving);
     }
+
+    @Transactional
+    public void unFollow(Long followId, Long loginUserId) {
+        FollowEntity followEntityForDelete = followRepository.findById(followId).orElseThrow(
+                () -> new BusinessException(ErrorCode.NOT_FOUND_FOLLOW)
+        );
+
+        if (!followEntityForDelete.getFollower().getId().equals(loginUserId)) {
+            throw new BusinessException(ErrorCode.FORBIDDEN_FOLLOW_DELETE);
+        }
+
+        followEntityForDelete.markAsDeleted(followEntityForDelete.getFollower().getNickname());
+    }
 }

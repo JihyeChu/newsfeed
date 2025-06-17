@@ -32,5 +32,16 @@ public class FollowController {
         );
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ResDTO<Object>> unFollow(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        followService.unFollow(id, userDetails.getUserEntity().getId());
 
+        return new ResponseEntity<>(
+                ResDTO.<Object>builder()
+                        .message("사용자를 언팔로우했습니다.")
+                        .code(HttpStatus.OK.value())
+                        .build(),
+                HttpStatus.OK
+        );
+    }
 }
