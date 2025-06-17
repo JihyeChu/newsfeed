@@ -18,7 +18,11 @@ public enum ErrorCode {
     // POST 도메인 (40020~40039)
     NOT_FOUND_POST(HttpStatus.NOT_FOUND, 40420, "게시글이 존재하지 않습니다."),
     FORBIDDEN_POST_UPDATE(HttpStatus.FORBIDDEN, 40320, "다른 사용자의 게시글은 수정할 수 없습니다."),
-    FORBIDDEN_POST_DELETE(HttpStatus.FORBIDDEN, 40321, "다른 사용자의 게시글은 삭제할 수 없습니다.");
+    FORBIDDEN_POST_DELETE(HttpStatus.FORBIDDEN, 40321, "다른 사용자의 게시글은 삭제할 수 없습니다."),
+
+    // FOLLOW 도메인 (40040~40049)
+    NOT_FOUND_FOLLOW(HttpStatus.NOT_FOUND, 40440, "팔로우가 존재하지 않습니다."),
+    FORBIDDEN_FOLLOW_DELETE(HttpStatus.FORBIDDEN, 40340, "다른 사용자의 팔로우를 삭제할 수 없습니다.");
 
     private final HttpStatus httpStatus;
     private final Integer code;
