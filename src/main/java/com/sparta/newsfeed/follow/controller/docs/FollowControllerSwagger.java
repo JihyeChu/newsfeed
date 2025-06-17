@@ -12,9 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Follow", description = "팔로우 생성, 삭제 관련 API를 제공합니다.")
 @RequestMapping("/api/follows")
@@ -27,4 +25,12 @@ public interface FollowControllerSwagger {
     })
     @PostMapping
     ResponseEntity<ResDTO<Object>> createFollow(@Valid @RequestBody ReqFollowCreateDTO dto, @AuthenticationPrincipal CustomUserDetails userDetails);
+
+    @Operation(summary = "팔로우 삭제", description = "팔로우를 삭제 하는 API 입니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "팔로우 삭제 성공", content = @Content(schema = @Schema(implementation = ResDTO.class))),
+            @ApiResponse(responseCode = "400", description = "팔로우 삭제 실패", content = @Content(schema = @Schema(implementation = ResDTO.class)))
+    })
+    @DeleteMapping
+    ResponseEntity<ResDTO<Object>> unFollow(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails userDetails);
 }
