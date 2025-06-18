@@ -9,8 +9,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Base64;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -38,5 +37,18 @@ class JwtUtilTest {
         // then
         assertNotNull(token);
         assertTrue(token.length() > 0);
+    }
+
+    // 토큰에서 nickname 추출이 가능한가?
+    @Test
+    void 닉네임_추출() {
+        // given
+        String token = jwtUtil.generateToken(nickname);
+
+        // when
+        String extracted = jwtUtil.extractNickname(token);
+
+        // then
+        assertEquals(nickname, extracted);
     }
 }
