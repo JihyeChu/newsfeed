@@ -50,4 +50,13 @@ public interface CommentControllerSwagger {
     ResponseEntity<ResDTO<Object>> updateComment(@PathVariable Long postId, @PathVariable Long commentId,
                                                  @Valid @RequestBody ReqCommentUpdateDTO dto,
                                                  @AuthenticationPrincipal CustomUserDetails userDetails);
+
+    @Operation(summary = "댓글 삭제", description = "댓글을 삭제 하는 API 입니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "댓글 삭제 성공", content = @Content(schema = @Schema(implementation = ResDTO.class))),
+            @ApiResponse(responseCode = "400", description = "댓글 삭제 실패", content = @Content(schema = @Schema(implementation = ResDTO.class)))
+    })
+    @DeleteMapping("/posts/{postId}/comments/{commentId}")
+    ResponseEntity<ResDTO<Object>> deleteComment(@PathVariable Long postId, @PathVariable Long commentId,
+                                                 @AuthenticationPrincipal CustomUserDetails userDetails);
 }
