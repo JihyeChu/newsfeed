@@ -1,5 +1,6 @@
 package com.sparta.newsfeed.user.entity;
 
+import com.sparta.newsfeed.comment.entity.CommentEntity;
 import com.sparta.newsfeed.common.entity.BaseEntity;
 import com.sparta.newsfeed.follow.entity.FollowEntity;
 import com.sparta.newsfeed.post.entity.PostEntity;
@@ -47,6 +48,9 @@ public class UserEntity extends BaseEntity {
 
     @OneToMany(mappedBy = "followee", orphanRemoval = true)
     private List<FollowEntity> followers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", orphanRemoval = true)
+    private List<CommentEntity> commentList = new ArrayList<>();
 
     @Builder
     public UserEntity(String nickname, String password, String username, String email, UserRole role) {

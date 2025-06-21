@@ -1,5 +1,6 @@
 package com.sparta.newsfeed.post.entity;
 
+import com.sparta.newsfeed.comment.entity.CommentEntity;
 import com.sparta.newsfeed.common.entity.BaseEntity;
 import com.sparta.newsfeed.user.entity.UserEntity;
 import jakarta.persistence.*;
@@ -7,6 +8,9 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -28,6 +32,9 @@ public class PostEntity extends BaseEntity {
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
+    @OneToMany(mappedBy = "post", orphanRemoval = true)
+    private List<CommentEntity> commentList = new ArrayList<>();
+
     @Builder
     public PostEntity(String title, String content, UserEntity user) {
         this.title = title;
@@ -42,7 +49,6 @@ public class PostEntity extends BaseEntity {
                 .user(user)
                 .build();
     }
-
 
     public void changeTitle(String title) {
         this.title = title;
