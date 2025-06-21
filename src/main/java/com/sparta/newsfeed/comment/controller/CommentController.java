@@ -45,7 +45,7 @@ public class CommentController {
                         .message("회원의 댓글을 전체 조회했습니다.")
                         .data(commentService.getCommentList(userDetails.getUserEntity().getId()))
                         .build(),
-                HttpStatus.CREATED
+                HttpStatus.OK
         );
     }
 
@@ -61,7 +61,21 @@ public class CommentController {
                         .code(HttpStatus.OK.value())
                         .message("댓글을 수정했습니다.")
                         .build(),
-                HttpStatus.CREATED
+                HttpStatus.OK
+        );
+    }
+
+    @DeleteMapping("/posts/{postId}/comments/{commentId}")
+    public ResponseEntity<ResDTO<Object>> deleteComment(@PathVariable Long postId, @PathVariable Long commentId,
+                                                        @AuthenticationPrincipal CustomUserDetails userDetails) {
+        commentService.deleteComment(postId, commentId, userDetails.getUserEntity().getId());
+
+        return new ResponseEntity<>(
+                ResDTO.<Object>builder()
+                        .code(HttpStatus.OK.value())
+                        .message("댓글을 삭제했습니다.")
+                        .build(),
+                HttpStatus.OK
         );
     }
 }

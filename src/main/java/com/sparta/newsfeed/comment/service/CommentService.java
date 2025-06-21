@@ -29,9 +29,7 @@ public class CommentService {
 
     @Transactional
     public ResCommentCreateDTO createComment(Long postId, ReqCommentCreateDTO dto, Long loginUserId) {
-        PostEntity postEntity = postRepository.findById(postId).orElseThrow(
-                () -> new BusinessException(ErrorCode.NOT_FOUND_POST)
-        );
+        PostEntity postEntity = getPostEntity(postId);
 
         UserEntity userEntity = userRepository.findById(loginUserId).orElseThrow(
                 () -> new BusinessException(ErrorCode.NOT_FOUND_USER)
@@ -53,13 +51,10 @@ public class CommentService {
 
     @Transactional
     public void updateComment(Long postId, Long commentId, ReqCommentUpdateDTO dto, Long loginUserId) {
-        CommentEntity commentEntityForUpdate = commentRepository.findById(commentId).orElseThrow(
-                () -> new BusinessException(ErrorCode.NOT_FOUND_COMMENT)
-        );
 
-        PostEntity postEntity = postRepository.findById(postId).orElseThrow(
-                () -> new BusinessException(ErrorCode.NOT_FOUND_POST)
-        );
+        CommentEntity commentEntityForUpdate = getCommentEntity(commentId);
+
+        PostEntity postEntity = getPostEntity(postId);
 
         if (!commentEntityForUpdate.getPost().getId().equals(postEntity.getId())) {
             throw new BusinessException(ErrorCode.INVALID_COMMENT_TO_POST);
@@ -74,5 +69,37 @@ public class CommentService {
         if (dto.getContent() != null) {
             commentEntityForUpdate.update(dto.getContent());
         }
+    }
+
+    @Transactional
+    public void deleteComment(Long postId, Long commentId, Long loginUserId) {
+        CommentEntity commentEntityForDelete = getCommentEntity(commentId);
+
+        PostEntity postEntity = getPostEntity(postId);
+
+        if (!commentEntityForDelete.getPost().getId().equals(postEntity.getId())) {
+            throw new BusinessException(ErrorCode.INVALID_COMMENT_TO_POST);
+        }
+
+        if (!commentEntityForDelete.getUser().getId().equals(loginUserId)) {
+            throw new BusinessException(ErrorCode.FORBIDDEN_COMMENT_DELETE);
+        }
+
+        String deleterNickname = userRepository.findById(loginUserId).orElseThrow(
+                () -> new BusinessException(ErrorCode.NOT_FOUND_USER)).getNickname();
+
+        commentEntityForDelete.markAsDeleted(deleterNickname);
+    }
+
+    private PostEntity getPostEntity(Long postId) {
+        return postRepository.findById(postId).orElseThrow(
+                () -> new BusinessException(ErrorCode.NOT_FOUND_POST)
+        );
+    }
+
+    private CommentEntity getCommentEntity(Long commentId) {
+        return commentRepository.findById(commentId).orElseThrow(
+                () -> new BusinessException(ErrorCode.NOT_FOUND_COMMENT)
+        );
     }
 }
