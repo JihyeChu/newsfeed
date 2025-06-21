@@ -27,7 +27,8 @@ public enum ErrorCode {
     // COMMENT 도메인 (40050~40059)
     NOT_FOUND_COMMENT(HttpStatus.NOT_FOUND, 40450, "댓글이 존재하지 않습니다."),
     FORBIDDEN_COMMENT_UPDATE(HttpStatus.FORBIDDEN, 40350, "다른 사용자의 댓글은 수정할 수 없습니다."),
-    INVALID_COMMENT_TO_POST(HttpStatus.BAD_REQUEST, 40050, "해당 게시글에 등록된 댓글이 아닙니다.");
+    INVALID_COMMENT_TO_POST(HttpStatus.BAD_REQUEST, 40050, "해당 게시글에 등록된 댓글이 아닙니다."),
+    FORBIDDEN_COMMENT_DELETE(HttpStatus.FORBIDDEN, 40351, "다른 사용자의 댓글은 삭제할 수 없습니다.");
 
     private final HttpStatus httpStatus;
     private final Integer code;
