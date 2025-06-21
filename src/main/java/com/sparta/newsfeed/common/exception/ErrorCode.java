@@ -22,7 +22,12 @@ public enum ErrorCode {
 
     // FOLLOW 도메인 (40040~40049)
     NOT_FOUND_FOLLOW(HttpStatus.NOT_FOUND, 40440, "팔로우가 존재하지 않습니다."),
-    FORBIDDEN_FOLLOW_DELETE(HttpStatus.FORBIDDEN, 40340, "다른 사용자의 팔로우를 삭제할 수 없습니다.");
+    FORBIDDEN_FOLLOW_DELETE(HttpStatus.FORBIDDEN, 40340, "다른 사용자의 팔로우를 삭제할 수 없습니다."),
+
+    // COMMENT 도메인 (40050~40059)
+    NOT_FOUND_COMMENT(HttpStatus.NOT_FOUND, 40450, "댓글이 존재하지 않습니다."),
+    FORBIDDEN_COMMENT_UPDATE(HttpStatus.FORBIDDEN, 40350, "다른 사용자의 댓글은 수정할 수 없습니다."),
+    INVALID_COMMENT_TO_POST(HttpStatus.BAD_REQUEST, 40050, "해당 게시글에 등록된 댓글이 아닙니다.");
 
     private final HttpStatus httpStatus;
     private final Integer code;
