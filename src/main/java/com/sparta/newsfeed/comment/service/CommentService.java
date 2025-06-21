@@ -12,6 +12,7 @@ import com.sparta.newsfeed.user.entity.UserEntity;
 import com.sparta.newsfeed.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +22,7 @@ public class CommentService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
 
+    @Transactional
     public ResCommentCreateDTO createComment(Long postId, ReqCommentCreateDTO dto, Long loginUserId) {
         PostEntity postEntity = postRepository.findById(postId).orElseThrow(
                 () -> new BusinessException(ErrorCode.NOT_FOUND_POST)
