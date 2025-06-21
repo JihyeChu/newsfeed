@@ -36,4 +36,12 @@ public class CommentEntity extends BaseEntity {
         this.post = post;
         this.user = user;
     }
+
+    public static CommentEntity create(String content, PostEntity postEntity, UserEntity userEntity) {
+        return CommentEntity.builder()
+                .content(content)
+                .post(postEntity)
+                .user(userEntity)
+                .build();
+    }
 }
