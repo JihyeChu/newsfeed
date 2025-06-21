@@ -1,6 +1,7 @@
 package com.sparta.newsfeed.comment.service;
 
 import com.sparta.newsfeed.comment.dto.req.ReqCommentCreateDTO;
+import com.sparta.newsfeed.comment.dto.req.ReqCommentUpdateDTO;
 import com.sparta.newsfeed.comment.dto.res.ResCommentCreateDTO;
 import com.sparta.newsfeed.comment.dto.res.ResCommentListDTO;
 import com.sparta.newsfeed.comment.entity.CommentEntity;
@@ -48,5 +49,30 @@ public class CommentService {
         return commentEntityList.stream()
                 .map(ResCommentListDTO::of)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void updateComment(Long postId, Long commentId, ReqCommentUpdateDTO dto, Long loginUserId) {
+        CommentEntity commentEntityForUpdate = commentRepository.findById(commentId).orElseThrow(
+                () -> new BusinessException(ErrorCode.NOT_FOUND_COMMENT)
+        );
+
+        PostEntity postEntity = postRepository.findById(postId).orElseThrow(
+                () -> new BusinessException(ErrorCode.NOT_FOUND_POST)
+        );
+
+        if (!commentEntityForUpdate.getPost().getId().equals(postEntity.getId())) {
+            throw new BusinessException(ErrorCode.INVALID_COMMENT_TO_POST);
+        }
+
+        UserEntity postAuthor = commentEntityForUpdate.getPost().getUser();
+
+        if (!commentEntityForUpdate.getUser().getId().equals(loginUserId) && !postAuthor.getId().equals(loginUserId)) {
+            throw new BusinessException(ErrorCode.FORBIDDEN_COMMENT_UPDATE);
+        }
+
+        if (dto.getContent() != null) {
+            commentEntityForUpdate.update(dto.getContent());
+        }
     }
 }

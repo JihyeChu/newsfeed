@@ -44,4 +44,8 @@ public class CommentEntity extends BaseEntity {
                 .user(userEntity)
                 .build();
     }
+
+    public void update(String content) {
+        this.content = content;
+    }
 }

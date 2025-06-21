@@ -1,6 +1,7 @@
 package com.sparta.newsfeed.comment.controller;
 
 import com.sparta.newsfeed.comment.dto.req.ReqCommentCreateDTO;
+import com.sparta.newsfeed.comment.dto.req.ReqCommentUpdateDTO;
 import com.sparta.newsfeed.comment.dto.res.ResCommentCreateDTO;
 import com.sparta.newsfeed.comment.dto.res.ResCommentListDTO;
 import com.sparta.newsfeed.comment.service.CommentService;
@@ -43,6 +44,22 @@ public class CommentController {
                         .code(HttpStatus.OK.value())
                         .message("회원의 댓글을 전체 조회했습니다.")
                         .data(commentService.getCommentList(userDetails.getUserEntity().getId()))
+                        .build(),
+                HttpStatus.CREATED
+        );
+    }
+
+    @PatchMapping("/posts/{postId}/comments/{commentId}")
+    public ResponseEntity<ResDTO<Object>> updateComment(@PathVariable Long postId, @PathVariable Long commentId,
+                                                        @Valid @RequestBody ReqCommentUpdateDTO dto,
+                                                        @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+        commentService.updateComment(postId, commentId, dto, userDetails.getUserEntity().getId());
+
+        return new ResponseEntity<>(
+                ResDTO.<Object>builder()
+                        .code(HttpStatus.OK.value())
+                        .message("댓글을 수정했습니다.")
                         .build(),
                 HttpStatus.CREATED
         );
