@@ -79,4 +79,17 @@ class UserServiceTest {
 
         assertEquals(ErrorCode.NOT_FOUND_USER, exception.getErrorCode(), exception.getMessage());
     }
+
+    // 비밀번호가 일치하지 않을 경우 예외가 발생하는가?
+    @Test
+    void 비밀번호_불일치() {
+        // given
+        when(userRepository.findByNicknameAndDeletedAtNull(nickname)).thenReturn(Optional.of(userEntity));
+        when(passwordEncoder.matches("rawPassword", "encodePassword")).thenReturn(false);
+
+        // when, then
+        BusinessException exception = assertThrows(BusinessException.class, () -> userService.login(loginDto));
+
+        assertEquals(ErrorCode.INVALID_CURRENT_PASSWORD, exception.getErrorCode(), exception.getMessage());
+    }
 }
