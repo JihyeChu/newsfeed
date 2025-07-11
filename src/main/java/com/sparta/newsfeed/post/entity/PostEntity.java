@@ -2,6 +2,7 @@ package com.sparta.newsfeed.post.entity;
 
 import com.sparta.newsfeed.comment.entity.CommentEntity;
 import com.sparta.newsfeed.common.entity.BaseEntity;
+import com.sparta.newsfeed.like.post.entity.PostLikeEntity;
 import com.sparta.newsfeed.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
