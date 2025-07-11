@@ -28,7 +28,11 @@ public enum ErrorCode {
     NOT_FOUND_COMMENT(HttpStatus.NOT_FOUND, 40450, "댓글이 존재하지 않습니다."),
     FORBIDDEN_COMMENT_UPDATE(HttpStatus.FORBIDDEN, 40350, "다른 사용자의 댓글은 수정할 수 없습니다."),
     INVALID_COMMENT_TO_POST(HttpStatus.BAD_REQUEST, 40050, "해당 게시글에 등록된 댓글이 아닙니다."),
-    FORBIDDEN_COMMENT_DELETE(HttpStatus.FORBIDDEN, 40351, "다른 사용자의 댓글은 삭제할 수 없습니다.");
+    FORBIDDEN_COMMENT_DELETE(HttpStatus.FORBIDDEN, 40351, "다른 사용자의 댓글은 삭제할 수 없습니다."),
+
+    // POST LIKE 도메인 (40060~40069)
+    ALREADY_LIKED_POST(HttpStatus.CONFLICT, 40960, "이미 좋아요를 눌렀습니다."),
+    CANNOT_LIKE_OWN_POST(HttpStatus.FORBIDDEN, 40360, "본인 게시글에는 좋아요가 불가합니다.");
 
     private final HttpStatus httpStatus;
     private final Integer code;
