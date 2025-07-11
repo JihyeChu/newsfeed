@@ -32,4 +32,11 @@ public class PostLikeEntity extends BaseEntity {
         this.post = post;
         this.user = user;
     }
+
+    public static PostLikeEntity create(PostEntity postEntity, UserEntity userEntity) {
+        return PostLikeEntity.builder()
+                .post(postEntity)
+                .user(userEntity)
+                .build();
+    }
 }
