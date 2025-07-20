@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class PostLikeService {
@@ -47,5 +49,20 @@ public class PostLikeService {
         PostLikeEntity postLikeEntity = PostLikeEntity.create(postEntity, userEntity);
 
         return ResPostLikeCreateDTO.of(postLikeRepository.save(postLikeEntity));
+    }
+
+    @Transactional
+    public void deletePostLike(Long postId, Long likeId, Long loginUserId) {
+        PostEntity postEntity = postRepository.findById(postId).orElseThrow(
+                () -> new BusinessException(ErrorCode.NOT_FOUND_POST)
+        );
+
+        UserEntity userEntity = userRepository.findById(loginUserId).orElseThrow(
+                () -> new BusinessException(ErrorCode.NOT_FOUND_USER)
+        );
+
+        Optional<PostLikeEntity> postLikeEntity = postLikeRepository.findByPostAndUser(postEntity, userEntity);
+
+        postLikeEntity.ifPresent(postLikeRepository::delete);
     }
 }
