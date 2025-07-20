@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,4 +27,13 @@ public interface PostLikeControllerSwagger {
     })
     @PostMapping("/{postId}/likes")
     ResponseEntity<ResDTO<ResPostLikeCreateDTO>> createPostLike(@PathVariable Long postId, @AuthenticationPrincipal CustomUserDetails userDetails);
+
+    @Operation(summary = "게시글 좋아요 취소", description = "게시글 좋아요를 취소 하는 API 입니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "게시글 좋아요 취소 성공", content = @Content(schema = @Schema(implementation = ResDTO.class))),
+            @ApiResponse(responseCode = "400", description = "게시글 좋아요 취소 실패", content = @Content(schema = @Schema(implementation = ResDTO.class)))
+    })
+    @DeleteMapping("/{postId}/likes/{likeId}")
+    ResponseEntity<ResDTO<Object>> deletePostLike(@PathVariable Long postId, @PathVariable Long likeId, @AuthenticationPrincipal CustomUserDetails userDetails);
+
 }
