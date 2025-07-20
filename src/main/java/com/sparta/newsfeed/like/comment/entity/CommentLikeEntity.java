@@ -32,4 +32,11 @@ public class CommentLikeEntity extends BaseEntity {
         this.comment = comment;
         this.user = user;
     }
+
+    public static CommentLikeEntity create(CommentEntity commentEntity, UserEntity userEntity) {
+        return CommentLikeEntity.builder()
+                .comment(commentEntity)
+                .user(userEntity)
+                .build();
+    }
 }
