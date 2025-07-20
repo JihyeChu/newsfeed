@@ -1,5 +1,6 @@
 package com.sparta.newsfeed.comment.controller;
 
+import com.sparta.newsfeed.comment.controller.docs.CommentControllerSwagger;
 import com.sparta.newsfeed.comment.dto.req.ReqCommentCreateDTO;
 import com.sparta.newsfeed.comment.dto.req.ReqCommentUpdateDTO;
 import com.sparta.newsfeed.comment.dto.res.ResCommentCreateDTO;
@@ -19,7 +20,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
-public class CommentController {
+public class CommentController implements CommentControllerSwagger {
 
     private final CommentService commentService;
 
