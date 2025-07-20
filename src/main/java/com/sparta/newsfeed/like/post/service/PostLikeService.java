@@ -35,20 +35,19 @@ public class PostLikeService {
                 () -> new BusinessException(ErrorCode.NOT_FOUND_POST)
         );
 
-        // 사용자 좋아요 중복 확인
-        if (postLikeRepository.existsByPostAndUser(postEntity, userEntity)) {
-            throw new BusinessException(ErrorCode.ALREADY_LIKED_POST);
-        }
-
         // 본인이 작성한 게시물과 댓글에 좋아요를 남길 수 없음
         if (postEntity.getUser().getId().equals(loginUserId)) {
             throw new BusinessException(ErrorCode.CANNOT_LIKE_OWN_POST);
         }
 
-        // 좋아요 생성 후 저장
-        PostLikeEntity postLikeEntity = PostLikeEntity.create(postEntity, userEntity);
+        Optional<PostLikeEntity> postLikeEntity = postLikeRepository.findByPostAndUser(postEntity, userEntity);
 
-        return ResPostLikeCreateDTO.of(postLikeRepository.save(postLikeEntity));
+        if (postLikeEntity.isEmpty()) {
+            PostLikeEntity postLikeEntityForSaving = PostLikeEntity.create(postEntity, userEntity);
+            return ResPostLikeCreateDTO.of(postLikeRepository.save(postLikeEntityForSaving));
+        }
+
+        return ResPostLikeCreateDTO.of(postLikeEntity.get());
     }
 
     @Transactional
