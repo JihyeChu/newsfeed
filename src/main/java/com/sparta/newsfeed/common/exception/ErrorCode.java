@@ -32,7 +32,10 @@ public enum ErrorCode {
 
     // POST LIKE 도메인 (40060~40069)
     ALREADY_LIKED_POST(HttpStatus.CONFLICT, 40960, "이미 좋아요를 눌렀습니다."),
-    CANNOT_LIKE_OWN_POST(HttpStatus.FORBIDDEN, 40360, "본인 게시글에는 좋아요가 불가합니다.");
+    CANNOT_LIKE_OWN_POST(HttpStatus.FORBIDDEN, 40360, "본인 게시글에는 좋아요가 불가합니다."),
+
+    // COMMENT LIKE 도메인 (40070~40079)
+    CANNOT_LIKE_OWN_COMMENT(HttpStatus.FORBIDDEN, 40370, "본인 댓글에는 좋아요가 불가능합니다.");
 
     private final HttpStatus httpStatus;
     private final Integer code;
