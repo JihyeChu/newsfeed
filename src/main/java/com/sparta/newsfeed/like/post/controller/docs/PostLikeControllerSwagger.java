@@ -33,7 +33,7 @@ public interface PostLikeControllerSwagger {
             @ApiResponse(responseCode = "200", description = "게시글 좋아요 취소 성공", content = @Content(schema = @Schema(implementation = ResDTO.class))),
             @ApiResponse(responseCode = "400", description = "게시글 좋아요 취소 실패", content = @Content(schema = @Schema(implementation = ResDTO.class)))
     })
-    @DeleteMapping("/{postId}/likes/{likeId}")
-    ResponseEntity<ResDTO<Object>> deletePostLike(@PathVariable Long postId, @PathVariable Long likeId, @AuthenticationPrincipal CustomUserDetails userDetails);
+    @DeleteMapping("/{postId}/likes")
+    ResponseEntity<ResDTO<Object>> deletePostLike(@PathVariable Long postId, @AuthenticationPrincipal CustomUserDetails userDetails);
 
 }

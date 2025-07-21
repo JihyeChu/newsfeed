@@ -30,9 +30,9 @@ public class PostLikeController implements PostLikeControllerSwagger {
         );
     }
 
-    @DeleteMapping("/{postId}/likes/{likeId}")
-    public ResponseEntity<ResDTO<Object>> deletePostLike(@PathVariable Long postId, @PathVariable Long likeId, @AuthenticationPrincipal CustomUserDetails userDetails) {
-        postLikeService.deletePostLike(postId, likeId, userDetails.getUserEntity().getId());
+    @DeleteMapping("/{postId}/likes")
+    public ResponseEntity<ResDTO<Object>> deletePostLike(@PathVariable Long postId, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        postLikeService.deletePostLike(postId, userDetails.getUserEntity().getId());
 
         return new ResponseEntity<>(
                 ResDTO.<Object>builder()

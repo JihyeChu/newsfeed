@@ -51,7 +51,7 @@ public class PostLikeService {
     }
 
     @Transactional
-    public void deletePostLike(Long postId, Long likeId, Long loginUserId) {
+    public void deletePostLike(Long postId, Long loginUserId) {
         PostEntity postEntity = postRepository.findById(postId).orElseThrow(
                 () -> new BusinessException(ErrorCode.NOT_FOUND_POST)
         );
