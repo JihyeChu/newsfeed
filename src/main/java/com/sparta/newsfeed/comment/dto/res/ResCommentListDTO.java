@@ -15,12 +15,14 @@ public class ResCommentListDTO {
     private Long commentId;
     private Long postId;
     private String comment;
+    private String nickname;
 
     public static ResCommentListDTO of(CommentEntity comment) {
         return ResCommentListDTO.builder()
                 .commentId(comment.getId())
                 .postId(comment.getPost().getId())
                 .comment(comment.getContent())
+                .nickname(comment.getUser().getNickname())
                 .build();
     }
 }
