@@ -47,7 +47,7 @@ public class PostService {
     @Transactional(readOnly = true)
     public List<ResPostListDTO> getPostList(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-        Page<PostEntity> postEntityList = postRepository.findAll(pageable);
+        Page<PostEntity> postEntityList = postRepository.findAllWithUser(pageable);
 
         return postEntityList.stream()
                 .map(ResPostListDTO::of)
