@@ -17,12 +17,14 @@ public class ResPostListDTO {
     private Long id;
     private String title;
     private String content;
+    private String nickname;
 
     public static ResPostListDTO of(PostEntity postEntity) {
         return ResPostListDTO.builder()
                 .id(postEntity.getId())
                 .title(postEntity.getTitle())
                 .content(postEntity.getContent())
+                .nickname(postEntity.getUser().getNickname())
                 .build();
     }
 }
