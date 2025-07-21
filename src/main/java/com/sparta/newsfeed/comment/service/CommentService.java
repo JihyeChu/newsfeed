@@ -13,6 +13,10 @@ import com.sparta.newsfeed.post.repository.PostRepository;
 import com.sparta.newsfeed.user.entity.UserEntity;
 import com.sparta.newsfeed.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,8 +45,11 @@ public class CommentService {
     }
 
     @Transactional(readOnly = true)
-    public List<ResCommentListDTO> getCommentList(Long loginUserId) {
-        List<CommentEntity> commentEntityList = commentRepository.findAllByUserId(loginUserId);
+    public List<ResCommentListDTO> getCommentList(Long postId, int page, int size) {
+        PostEntity postEntity = getPostEntity(postId);
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<CommentEntity> commentEntityList = commentRepository.findAllWithUser(pageable);
 
         return commentEntityList.stream()
                 .map(ResCommentListDTO::of)
