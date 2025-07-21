@@ -38,13 +38,13 @@ public class CommentController implements CommentControllerSwagger {
         );
     }
 
-    @GetMapping("/users/me/comments")
-    public ResponseEntity<ResDTO<List<ResCommentListDTO>>> getCommentList(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    @GetMapping("/posts/{postId}/comments")
+    public ResponseEntity<ResDTO<List<ResCommentListDTO>>> getCommentList(@PathVariable Long postId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         return new ResponseEntity<>(
                 ResDTO.<List<ResCommentListDTO>>builder()
                         .code(HttpStatus.OK.value())
                         .message("회원의 댓글을 전체 조회했습니다.")
-                        .data(commentService.getCommentList(userDetails.getUserEntity().getId()))
+                        .data(commentService.getCommentList(postId, page, size))
                         .build(),
                 HttpStatus.OK
         );

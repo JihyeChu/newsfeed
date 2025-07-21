@@ -38,8 +38,8 @@ public interface CommentControllerSwagger {
             @ApiResponse(responseCode = "200", description = "댓글 조회 성공", content = @Content(schema = @Schema(implementation = ResDTO.class))),
             @ApiResponse(responseCode = "400", description = "댓글 조회 실패", content = @Content(schema = @Schema(implementation = ResDTO.class)))
     })
-    @GetMapping("/users/me/comments")
-    ResponseEntity<ResDTO<List<ResCommentListDTO>>> getCommentList(@AuthenticationPrincipal CustomUserDetails userDetails);
+    @GetMapping("/posts/{postId}/comments")
+    ResponseEntity<ResDTO<List<ResCommentListDTO>>> getCommentList(@PathVariable Long postId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size);
 
     @Operation(summary = "댓글 수정", description = "댓글을 수정 하는 API 입니다.")
     @ApiResponses(value = {
