@@ -49,4 +49,19 @@ public class CommentLikeService {
 
         return ResCommentLikeCreateDTO.of(commentLikeEntity.get());
     }
+
+    @Transactional
+    public void deleteCommentLike(Long commentId, Long loginUserId) {
+        CommentEntity commentEntity = commentRepository.findById(commentId).orElseThrow(
+                () -> new BusinessException(ErrorCode.NOT_FOUND_COMMENT)
+        );
+
+        UserEntity userEntity = userRepository.findById(loginUserId).orElseThrow(
+                () -> new BusinessException(ErrorCode.NOT_FOUND_USER)
+        );
+
+        Optional<CommentLikeEntity> commentLikeEntity = commentLikeRepository.findByCommentAndUser(commentEntity, userEntity);
+
+        commentLikeEntity.ifPresent(commentLikeRepository::delete);
+    }
 }
