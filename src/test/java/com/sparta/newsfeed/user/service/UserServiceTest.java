@@ -1,5 +1,7 @@
 package com.sparta.newsfeed.user.service;
 
+import com.sparta.newsfeed.common.exception.BusinessException;
+import com.sparta.newsfeed.common.exception.ErrorCode;
 import com.sparta.newsfeed.common.utils.JwtUtil;
 import com.sparta.newsfeed.user.dto.req.ReqUserPostLoginDTO;
 import com.sparta.newsfeed.user.dto.res.ResUserPostLoginDTO;
@@ -15,8 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -64,5 +66,17 @@ class UserServiceTest {
         verify(userRepository).findByNicknameAndDeletedAtNull(nickname);
         verify(passwordEncoder).matches("rawPassword", "encodePassword");
         verify(jwtUtil).generateToken(nickname);
+    }
+
+    // 존재하지 않는 사용자일 경우 예외가 잘 발생하는가?
+    @Test
+    void 존재하지_않는_사용자() {
+        // given
+        when(userRepository.findByNicknameAndDeletedAtNull(nickname)).thenReturn(Optional.empty());
+
+        // when, then
+        BusinessException exception = assertThrows(BusinessException.class, () -> userService.login(loginDto));
+
+        assertEquals(ErrorCode.NOT_FOUND_USER, exception.getErrorCode(), exception.getMessage());
     }
 }
