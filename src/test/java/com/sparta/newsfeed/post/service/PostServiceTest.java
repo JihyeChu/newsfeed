@@ -89,4 +89,15 @@ class PostServiceTest {
         // when, then
         assertThrows(BusinessException.class, () -> postService.updatePost(reqDto, 1L, 1L));
     }
+
+    @Test
+    void 게시글_삭제시_본인이_아닌경우() {
+        // given
+        when(postRepository.findById(1L)).thenReturn(Optional.of(post));
+        Long otherUserId = 2L;
+
+        // when, then
+        BusinessException exception = assertThrows(BusinessException.class, () -> postService.deletePost(1L, otherUserId));
+        assertEquals(ErrorCode.FORBIDDEN_POST_DELETE, exception.getErrorCode(), exception.getMessage());
+    }
 }
