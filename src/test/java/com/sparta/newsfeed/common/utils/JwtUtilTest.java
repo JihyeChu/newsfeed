@@ -1,5 +1,7 @@
 package com.sparta.newsfeed.common.utils;
 
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -7,7 +9,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.security.Key;
 import java.util.Base64;
+import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -76,5 +80,27 @@ class JwtUtilTest {
 
         // then
         assertFalse(isValid);
+    }
+
+    @Test
+    void 만료된_토큰_검증() {
+        // given
+        Date now = new Date();
+        Date expiredDate = new Date(now.getTime() - 1000); // 이미 만료
+
+        Key key = (Key) ReflectionTestUtils.getField(jwtUtil, "key");
+
+        String expiredToken = Jwts.builder()
+                .setSubject(nickname)
+                .setIssuedAt(now)
+                .setExpiration(expiredDate)
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+
+        // when
+        boolean inValid = jwtUtil.validateToken(expiredToken);
+
+        // then
+        assertFalse(inValid);
     }
 }
