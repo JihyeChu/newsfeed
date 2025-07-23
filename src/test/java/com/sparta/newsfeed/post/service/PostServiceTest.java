@@ -79,4 +79,14 @@ class PostServiceTest {
         BusinessException exception = assertThrows(BusinessException.class, () -> postService.updatePost(reqDto, 1L, otherUserId));
         assertEquals(ErrorCode.FORBIDDEN_POST_UPDATE, exception.getErrorCode(), exception.getMessage());
     }
+
+    @Test
+    void 수정시_게시글이_존재하지_않는경우() {
+        // given
+        when(postRepository.findById(1L)).thenReturn(Optional.empty());
+        ReqPostPatchDTO reqDto = new ReqPostPatchDTO("제목", null);
+
+        // when, then
+        assertThrows(BusinessException.class, () -> postService.updatePost(reqDto, 1L, 1L));
+    }
 }
