@@ -64,4 +64,17 @@ class JwtUtilTest {
         // then
         assertTrue(isValid);
     }
+
+    // 위조된 토큰은 실패하는가?
+    @Test
+    void 위조된_토큰_검증_실패() {
+        // given
+        String invalidToken = "이건 위조된 토큰 입니다.";
+
+        // when
+        boolean isValid = jwtUtil.validateToken(invalidToken);
+
+        // then
+        assertFalse(isValid);
+    }
 }
