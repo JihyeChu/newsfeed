@@ -51,4 +51,17 @@ class JwtUtilTest {
         // then
         assertEquals(nickname, extracted);
     }
+
+    // 토큰이 유효한가?
+    @Test
+    void 토큰_유효성_검증() {
+        // given
+        String token = jwtUtil.generateToken(nickname);
+
+        // when
+        boolean isValid = jwtUtil.validateToken(token);
+
+        // then
+        assertTrue(isValid);
+    }
 }
