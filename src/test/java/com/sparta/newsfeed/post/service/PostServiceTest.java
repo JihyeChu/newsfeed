@@ -1,6 +1,9 @@
 package com.sparta.newsfeed.post.service;
 
+import com.sparta.newsfeed.common.exception.BusinessException;
+import com.sparta.newsfeed.common.exception.ErrorCode;
 import com.sparta.newsfeed.post.dto.req.ReqPostCreateDTO;
+import com.sparta.newsfeed.post.dto.req.ReqPostPatchDTO;
 import com.sparta.newsfeed.post.dto.res.ResPostCreateDTO;
 import com.sparta.newsfeed.post.entity.PostEntity;
 import com.sparta.newsfeed.post.repository.PostRepository;
@@ -65,4 +68,15 @@ class PostServiceTest {
         assertEquals(post.getContent(), result.getContent());
     }
 
+    @Test
+    void 게시글_수정시_본인이_아닌경우() {
+        // given
+        ReqPostPatchDTO reqDto = new ReqPostPatchDTO("제목_수정", null);
+        when(postRepository.findById(1L)).thenReturn(Optional.of(post));
+        Long otherUserId = 2L;
+
+        // when, then
+        BusinessException exception = assertThrows(BusinessException.class, () -> postService.updatePost(reqDto, 1L, otherUserId));
+        assertEquals(ErrorCode.FORBIDDEN_POST_UPDATE, exception.getErrorCode(), exception.getMessage());
+    }
 }
