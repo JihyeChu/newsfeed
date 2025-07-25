@@ -8,6 +8,7 @@ import com.sparta.newsfeed.user.dto.res.ResUserPostLoginDTO;
 import com.sparta.newsfeed.user.entity.UserEntity;
 import com.sparta.newsfeed.user.entity.UserRole;
 import com.sparta.newsfeed.user.repository.UserRepository;
+import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -34,6 +35,9 @@ class UserServiceTest {
     private PasswordEncoder passwordEncoder;
 
     @Mock
+    private HttpServletResponse response;
+
+    @Mock
     private JwtUtil jwtUtil;
 
     private final String nickname = "testUser";
@@ -57,7 +61,7 @@ class UserServiceTest {
         when(jwtUtil.generateAccessToken(nickname)).thenReturn("mock-jwt-token");
 
         // when
-        ResUserPostLoginDTO result = userService.login(loginDto);
+        ResUserPostLoginDTO result = userService.login(loginDto, response);
 
         // then
         assertNotNull(result);
@@ -74,7 +78,7 @@ class UserServiceTest {
         when(userRepository.findByNicknameAndDeletedAtNull(nickname)).thenReturn(Optional.empty());
 
         // when, then
-        BusinessException exception = assertThrows(BusinessException.class, () -> userService.login(loginDto));
+        BusinessException exception = assertThrows(BusinessException.class, () -> userService.login(loginDto, response));
 
         assertEquals(ErrorCode.NOT_FOUND_USER, exception.getErrorCode(), exception.getMessage());
     }
@@ -87,7 +91,7 @@ class UserServiceTest {
         when(passwordEncoder.matches("rawPassword", "encodePassword")).thenReturn(false);
 
         // when, then
-        BusinessException exception = assertThrows(BusinessException.class, () -> userService.login(loginDto));
+        BusinessException exception = assertThrows(BusinessException.class, () -> userService.login(loginDto, response));
 
         assertEquals(ErrorCode.INVALID_CURRENT_PASSWORD, exception.getErrorCode(), exception.getMessage());
     }
