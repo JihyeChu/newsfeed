@@ -11,6 +11,7 @@ import com.sparta.newsfeed.user.dto.res.ResUserPostLoginDTO;
 import com.sparta.newsfeed.user.dto.res.ResUserPostSignupDTO;
 import com.sparta.newsfeed.user.security.CustomUserDetails;
 import com.sparta.newsfeed.user.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -39,13 +40,13 @@ public class UserController implements UserControllerSwagger {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ResDTO<ResUserPostLoginDTO>> login(@Valid @RequestBody ReqUserPostLoginDTO dto) {
+    public ResponseEntity<ResDTO<ResUserPostLoginDTO>> login(@Valid @RequestBody ReqUserPostLoginDTO dto, HttpServletResponse response) {
 
         return new ResponseEntity<>(
                 ResDTO.<ResUserPostLoginDTO>builder()
                         .code(HttpStatus.OK.value())
                         .message("로그인 되었습니다.")
-                        .data(userService.login(dto))
+                        .data(userService.login(dto, response))
                         .build(),
                 HttpStatus.OK
         );
