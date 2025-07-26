@@ -4,15 +4,19 @@ import com.sparta.newsfeed.common.exception.BusinessException;
 import com.sparta.newsfeed.common.exception.ErrorCode;
 import com.sparta.newsfeed.common.utils.JwtUtil;
 import com.sparta.newsfeed.user.dto.req.ReqUserDeleteAccountDTO;
+import com.sparta.newsfeed.user.dto.req.ReqUserPatchProfileDTO;
 import com.sparta.newsfeed.user.dto.req.ReqUserPostLoginDTO;
 import com.sparta.newsfeed.user.dto.req.ReqUserPostSignupDTO;
-import com.sparta.newsfeed.user.dto.req.ReqUserPatchProfileDTO;
 import com.sparta.newsfeed.user.dto.res.ResUserGetProfileDTO;
 import com.sparta.newsfeed.user.dto.res.ResUserPostLoginDTO;
 import com.sparta.newsfeed.user.dto.res.ResUserPostSignupDTO;
+import com.sparta.newsfeed.user.entity.RefreshToken;
 import com.sparta.newsfeed.user.entity.UserEntity;
 import com.sparta.newsfeed.user.entity.UserRole;
+import com.sparta.newsfeed.user.repository.RefreshTokenRepository;
 import com.sparta.newsfeed.user.repository.UserRepository;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,6 +32,7 @@ public class UserService {
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Transactional
     public ResUserPostSignupDTO signup(@Valid ReqUserPostSignupDTO dto) {
@@ -46,7 +51,7 @@ public class UserService {
     }
 
     @Transactional
-    public ResUserPostLoginDTO login(@Valid ReqUserPostLoginDTO dto) {
+    public ResUserPostLoginDTO login(@Valid ReqUserPostLoginDTO dto, HttpServletResponse response) {
 
         UserEntity userEntity = getUserEntityOptionalByNickname(dto.getNickname()).orElseThrow(
                 () -> new BusinessException(ErrorCode.NOT_FOUND_USER)
@@ -56,9 +61,24 @@ public class UserService {
             throw new BusinessException(ErrorCode.INVALID_CURRENT_PASSWORD);
         }
 
-        String jwtToken = jwtUtil.generateToken(userEntity.getNickname());
+        String accessToken = jwtUtil.generateAccessToken(userEntity.getNickname());
 
-        return ResUserPostLoginDTO.of(jwtToken);
+        Optional<RefreshToken> refreshTokenOptional = refreshTokenRepository.findByNickname(userEntity.getNickname());
+
+        if (refreshTokenOptional.isEmpty()) {
+            String refreshToken = jwtUtil.generateRefreshToken(userEntity.getNickname());
+
+            refreshTokenRepository.save(RefreshToken.builder()
+                    .nickname(userEntity.getNickname())
+                    .refreshToken(refreshToken)
+                    .build()
+            );
+
+            Cookie refreshTokenCookie = jwtUtil.generateRefreshJwtCookie(refreshToken);
+            response.addCookie(refreshTokenCookie);
+        }
+
+        return ResUserPostLoginDTO.of(accessToken);
     }
 
     @Transactional(readOnly = true)
