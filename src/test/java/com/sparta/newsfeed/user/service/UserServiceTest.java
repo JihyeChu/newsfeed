@@ -18,7 +18,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -55,7 +54,7 @@ class UserServiceTest {
         // given
         when(userRepository.findByNicknameAndDeletedAtNull(nickname)).thenReturn(Optional.of(userEntity));
         when(passwordEncoder.matches("rawPassword", "encodePassword")).thenReturn(true);
-        when(jwtUtil.generateToken(nickname)).thenReturn("mock-jwt-token");
+        when(jwtUtil.generateAccessToken(nickname)).thenReturn("mock-jwt-token");
 
         // when
         ResUserPostLoginDTO result = userService.login(loginDto);
@@ -65,7 +64,7 @@ class UserServiceTest {
         assertEquals("mock-jwt-token", result.getToken());
         verify(userRepository).findByNicknameAndDeletedAtNull(nickname);
         verify(passwordEncoder).matches("rawPassword", "encodePassword");
-        verify(jwtUtil).generateToken(nickname);
+        verify(jwtUtil).generateAccessToken(nickname);
     }
 
     // 존재하지 않는 사용자일 경우 예외가 잘 발생하는가?

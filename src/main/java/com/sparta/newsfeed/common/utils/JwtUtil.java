@@ -18,9 +18,7 @@ import java.util.Date;
 @Slf4j(topic = "JwtUtil")
 @Component
 public class JwtUtil {
-
-    private static final String BEARER_PREFIX = "Bearer ";
-    private final long TOKEN_TIME = 60 * 60 * 1000L;
+    private static final long ACCESS_TOKEN_EXPIRE_TIME = 60 * 60 * 1000L * 24; // 24시간
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
     private final CustomUserDetailsService customUserDetailsService;
 
@@ -39,13 +37,13 @@ public class JwtUtil {
         key = Keys.hmacShaKeyFor(bytes);
     }
 
-    // JWT 생성
-    public String generateToken(String nickname) {
+    // JWT Access Token 생성
+    public String generateAccessToken(String nickname) {
         Date date = new Date();
 
         return Jwts.builder()
                 .setSubject(nickname)
-                .setExpiration(new Date(date.getTime() + TOKEN_TIME))
+                .setExpiration(new Date(date.getTime() + ACCESS_TOKEN_EXPIRE_TIME))
                 .setIssuedAt(date)
                 .signWith(key, signatureAlgorithm)
                 .compact();

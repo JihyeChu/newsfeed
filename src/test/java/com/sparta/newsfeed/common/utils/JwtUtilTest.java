@@ -36,7 +36,7 @@ class JwtUtilTest {
     @Test
     void 토큰_생성_성공() {
         // when
-        String token = jwtUtil.generateToken(nickname);
+        String token = jwtUtil.generateAccessToken(nickname);
 
         // then
         assertNotNull(token);
@@ -47,7 +47,7 @@ class JwtUtilTest {
     @Test
     void 닉네임_추출() {
         // given
-        String token = jwtUtil.generateToken(nickname);
+        String token = jwtUtil.generateAccessToken(nickname);
 
         // when
         String extracted = jwtUtil.extractNickname(token);
@@ -60,7 +60,7 @@ class JwtUtilTest {
     @Test
     void 토큰_유효성_검증() {
         // given
-        String token = jwtUtil.generateToken(nickname);
+        String token = jwtUtil.generateAccessToken(nickname);
 
         // when
         boolean isValid = jwtUtil.validateToken(token);
