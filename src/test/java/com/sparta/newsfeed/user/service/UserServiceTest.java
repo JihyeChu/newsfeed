@@ -4,10 +4,12 @@ import com.sparta.newsfeed.common.exception.BusinessException;
 import com.sparta.newsfeed.common.exception.ErrorCode;
 import com.sparta.newsfeed.common.utils.JwtUtil;
 import com.sparta.newsfeed.user.dto.req.ReqUserPostLoginDTO;
-import com.sparta.newsfeed.user.dto.res.ResUserPostLoginDTO;
+import com.sparta.newsfeed.user.entity.RefreshToken;
 import com.sparta.newsfeed.user.entity.UserEntity;
 import com.sparta.newsfeed.user.entity.UserRole;
+import com.sparta.newsfeed.user.repository.RefreshTokenRepository;
 import com.sparta.newsfeed.user.repository.UserRepository;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,9 +20,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -30,6 +32,9 @@ class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private RefreshTokenRepository refreshTokenRepository;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -56,20 +61,33 @@ class UserServiceTest {
     @Test
     void 로그인_성공시_토큰_발급() {
         // given
+        String accessToken = "access-token";
+        String refreshToken = "refresh-token";
+
         when(userRepository.findByNicknameAndDeletedAtNull(nickname)).thenReturn(Optional.of(userEntity));
         when(passwordEncoder.matches("rawPassword", "encodePassword")).thenReturn(true);
-        when(jwtUtil.generateAccessToken(nickname)).thenReturn("mock-jwt-token");
+        when(jwtUtil.generateAccessToken(nickname)).thenReturn(accessToken);
+        when(jwtUtil.generateRefreshToken(nickname)).thenReturn(refreshToken);
+        when(refreshTokenRepository.findByNickname(nickname)).thenReturn(Optional.empty());
+
+        Cookie mockRefreshCookie = new Cookie("Refresh-jwt", refreshToken);
+        when(jwtUtil.generateRefreshJwtCookie(refreshToken)).thenReturn(mockRefreshCookie);
+
+        HttpServletResponse response = mock(HttpServletResponse.class);
 
         // when
-        ResUserPostLoginDTO result = userService.login(loginDto, response);
+        userService.login(loginDto, response);
 
         // then
-        assertNotNull(result);
-        assertEquals("mock-jwt-token", result.getToken());
         verify(userRepository).findByNicknameAndDeletedAtNull(nickname);
         verify(passwordEncoder).matches("rawPassword", "encodePassword");
         verify(jwtUtil).generateAccessToken(nickname);
+        verify(jwtUtil).generateRefreshToken(nickname);
+        verify(refreshTokenRepository).save(any(RefreshToken.class));
+        verify(response).setHeader("Authorization", "Bearer " + accessToken);
+        verify(response).addCookie(mockRefreshCookie);
     }
+
 
     // 존재하지 않는 사용자일 경우 예외가 잘 발생하는가?
     @Test
