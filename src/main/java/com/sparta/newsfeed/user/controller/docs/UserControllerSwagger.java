@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +42,15 @@ public interface UserControllerSwagger {
     @PostMapping("/login")
     ResponseEntity<ResDTO<ResUserPostLoginDTO>> login(@Valid @RequestBody ReqUserPostLoginDTO dto, HttpServletResponse response);
 
-    @Operation(summary = "프로필 조회", description = "프로필을 조회 하는 API 입니다.")
+    @Operation(summary = "액세스 토큰 재발급", description = "토큰 재발급 하는 API 입니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "토큰 재발급 성공", content = @Content(schema = @Schema(implementation = ResDTO.class))),
+            @ApiResponse(responseCode = "400", description = "토큰 재발급 실패", content = @Content(schema = @Schema(implementation = ResDTO.class)))
+    })
+    @PostMapping("/token/refresh-token")
+    ResponseEntity<ResDTO<Object>> createNewAccessToken(HttpServletRequest request, HttpServletResponse response);
+
+        @Operation(summary = "프로필 조회", description = "프로필을 조회 하는 API 입니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "프로필 조회 성공", content = @Content(schema = @Schema(implementation = ResDTO.class))),
             @ApiResponse(responseCode = "400", description = "프로필 조회 실패", content = @Content(schema = @Schema(implementation = ResDTO.class)))
