@@ -14,6 +14,8 @@ public enum ErrorCode {
     REQUIRED_CURRENT_PASSWORD(HttpStatus.BAD_REQUEST, 40001, "현재 비밀번호를 입력해 주세요."),
     SAME_AS_OLD_PASSWORD(HttpStatus.BAD_REQUEST, 40002, "기존 비밀번호와 동일합니다."),
     FORBIDDEN_USER_UPDATE(HttpStatus.FORBIDDEN, 40301, "다른 사용자의 프로필은 수정할 수 없습니다."),
+    INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, 40102, "유효하지 않은 리프레시 토큰입니다."),
+    REFRESH_TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, 40103,"리프레시 토큰이 존재하지 않습니다."),
 
     // POST 도메인 (40020~40039)
     NOT_FOUND_POST(HttpStatus.NOT_FOUND, 40420, "게시글이 존재하지 않습니다."),
