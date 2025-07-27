@@ -52,7 +52,7 @@ public class UserService {
     }
 
     @Transactional
-    public ResUserPostLoginDTO login(@Valid ReqUserPostLoginDTO dto, HttpServletResponse response) {
+    public void login(@Valid ReqUserPostLoginDTO dto, HttpServletResponse response) {
 
         UserEntity userEntity = getUserEntityOptionalByNickname(dto.getNickname()).orElseThrow(
                 () -> new BusinessException(ErrorCode.NOT_FOUND_USER)
@@ -75,7 +75,7 @@ public class UserService {
             response.addCookie(refreshTokenCookie);
         }
 
-        return ResUserPostLoginDTO.of(accessToken);
+        response.setHeader("Authorization", "Bearer " + accessToken);
     }
 
     public void createNewAccessToken(HttpServletRequest request, HttpServletResponse response) {

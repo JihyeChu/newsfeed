@@ -41,13 +41,13 @@ public class UserController implements UserControllerSwagger {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ResDTO<ResUserPostLoginDTO>> login(@Valid @RequestBody ReqUserPostLoginDTO dto, HttpServletResponse response) {
+    public ResponseEntity<ResDTO<Object>> login(@Valid @RequestBody ReqUserPostLoginDTO dto, HttpServletResponse response) {
+        userService.login(dto, response);
 
         return new ResponseEntity<>(
-                ResDTO.<ResUserPostLoginDTO>builder()
+                ResDTO.<Object>builder()
                         .code(HttpStatus.OK.value())
                         .message("로그인 되었습니다.")
-                        .data(userService.login(dto, response))
                         .build(),
                 HttpStatus.OK
         );
