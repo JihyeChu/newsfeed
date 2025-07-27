@@ -40,7 +40,7 @@ public interface UserControllerSwagger {
             @ApiResponse(responseCode = "400", description = "로그인 실패", content = @Content(schema = @Schema(implementation = ResDTO.class)))
     })
     @PostMapping("/login")
-    ResponseEntity<ResDTO<ResUserPostLoginDTO>> login(@Valid @RequestBody ReqUserPostLoginDTO dto, HttpServletResponse response);
+    ResponseEntity<ResDTO<Object>> login(@Valid @RequestBody ReqUserPostLoginDTO dto, HttpServletResponse response);
 
     @Operation(summary = "액세스 토큰 재발급", description = "토큰 재발급 하는 API 입니다.")
     @ApiResponses(value = {
