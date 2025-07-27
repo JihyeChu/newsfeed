@@ -16,6 +16,7 @@ import com.sparta.newsfeed.user.entity.UserRole;
 import com.sparta.newsfeed.user.repository.RefreshTokenRepository;
 import com.sparta.newsfeed.user.repository.UserRepository;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -75,6 +76,28 @@ public class UserService {
         }
 
         return ResUserPostLoginDTO.of(accessToken);
+    }
+
+    public void createNewAccessToken(HttpServletRequest request, HttpServletResponse response) {
+        String refreshToken = checkRefreshToken(request);
+
+        if (refreshToken == null || !jwtUtil.validateToken(refreshToken)) {
+            throw new BusinessException(ErrorCode.INVALID_REFRESH_TOKEN);
+        }
+
+        String nickname = jwtUtil.extractNickname(refreshToken);
+        Optional<RefreshToken> refreshTokenOptional = refreshTokenRepository.findByNickname(nickname);
+
+        RefreshToken tokenForSaving = refreshTokenOptional.orElseThrow(
+                () -> new BusinessException(ErrorCode.REFRESH_TOKEN_NOT_FOUND)
+        );
+
+        if (tokenForSaving.getRefreshToken().equals(refreshToken)) {
+            throw new BusinessException(ErrorCode.INVALID_REFRESH_TOKEN);
+        }
+
+        String newAccessToken = jwtUtil.generateAccessToken(nickname);
+        response.setHeader("Authorization", "Bearer " + newAccessToken);
     }
 
     @Transactional(readOnly = true)
@@ -148,5 +171,17 @@ public class UserService {
 
     private Optional<UserEntity> getUserEntityOptionalByNickname(String nickname) {
         return userRepository.findByNicknameAndDeletedAtNull(nickname);
+    }
+
+    private String checkRefreshToken(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("Refresh-jwt" .equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
     }
 }

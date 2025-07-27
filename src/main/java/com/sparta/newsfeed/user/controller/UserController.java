@@ -11,6 +11,7 @@ import com.sparta.newsfeed.user.dto.res.ResUserPostLoginDTO;
 import com.sparta.newsfeed.user.dto.res.ResUserPostSignupDTO;
 import com.sparta.newsfeed.user.security.CustomUserDetails;
 import com.sparta.newsfeed.user.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -52,9 +53,21 @@ public class UserController implements UserControllerSwagger {
         );
     }
 
+    @PostMapping("/token/refresh-token")
+    public ResponseEntity<ResDTO<Object>> createNewAccessToken(HttpServletRequest request, HttpServletResponse response) {
+        userService.createNewAccessToken(request, response);
+
+        return new ResponseEntity<>(
+                ResDTO.<Object>builder()
+                        .code(HttpStatus.OK.value())
+                        .message("새로운 Access Token 발급에 성공하였습니다.")
+                        .build(),
+                HttpStatus.OK
+        );
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<ResDTO<ResUserGetProfileDTO>> getUserById(@PathVariable Long id) {
-
         return new ResponseEntity<>(
                 ResDTO.<ResUserGetProfileDTO>builder()
                         .code(HttpStatus.OK.value())
