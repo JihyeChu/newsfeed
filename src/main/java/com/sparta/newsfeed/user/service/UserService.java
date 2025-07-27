@@ -68,11 +68,7 @@ public class UserService {
         if (refreshTokenOptional.isEmpty()) {
             String refreshToken = jwtUtil.generateRefreshToken(userEntity.getNickname());
 
-            refreshTokenRepository.save(RefreshToken.builder()
-                    .nickname(userEntity.getNickname())
-                    .refreshToken(refreshToken)
-                    .build()
-            );
+            refreshTokenRepository.save(RefreshToken.create(dto.getNickname(), refreshToken));
 
             Cookie refreshTokenCookie = jwtUtil.generateRefreshJwtCookie(refreshToken);
             response.addCookie(refreshTokenCookie);
