@@ -41,24 +41,24 @@ public class JwtUtil {
     }
 
     // JWT Access Token 생성
-    public String generateAccessToken(String nickname) {
+    public String generateAccessToken(Long userId, String nickname) {
         Date date = new Date();
 
         return Jwts.builder()
-                .setSubject(nickname)
+                .setSubject(String.valueOf(userId))
+                .claim("nickname", nickname)
                 .setExpiration(new Date(date.getTime() + ACCESS_TOKEN_EXPIRE_TIME))
                 .setIssuedAt(date)
                 .signWith(key, signatureAlgorithm)
                 .compact();
-
     }
 
     // JWT Refresh Token 생성
-    public String generateRefreshToken(String nickname) {
+    public String generateRefreshToken(Long userId) {
         Date date = new Date();
 
         return Jwts.builder()
-                .setSubject(nickname)
+                .setSubject(String.valueOf(userId))
                 .setExpiration(new Date(date.getTime() + REFRESH_TOKEN_EXPIRE_TIME))
                 .setIssuedAt(date)
                 .signWith(key, signatureAlgorithm)
@@ -77,9 +77,14 @@ public class JwtUtil {
         return refreshJwtCookie;
     }
 
-    // 토큰에서 아이디 추출
-    public String extractNickname(String token) {
+    // 토큰에서 userId 추출
+    public String extractUserId(String token) {
         return extractAllClaims(token).getSubject();
+    }
+
+    // 토큰에서 아이디(닉네임) 추출
+    public String extractNickname(String token) {
+        return extractAllClaims(token).get("nickname", String.class);
     }
 
     // 토큰에서 Claims 추출

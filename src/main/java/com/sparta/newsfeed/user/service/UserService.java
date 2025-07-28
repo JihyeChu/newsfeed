@@ -8,7 +8,6 @@ import com.sparta.newsfeed.user.dto.req.ReqUserPatchProfileDTO;
 import com.sparta.newsfeed.user.dto.req.ReqUserPostLoginDTO;
 import com.sparta.newsfeed.user.dto.req.ReqUserPostSignupDTO;
 import com.sparta.newsfeed.user.dto.res.ResUserGetProfileDTO;
-import com.sparta.newsfeed.user.dto.res.ResUserPostLoginDTO;
 import com.sparta.newsfeed.user.dto.res.ResUserPostSignupDTO;
 import com.sparta.newsfeed.user.entity.RefreshToken;
 import com.sparta.newsfeed.user.entity.UserEntity;
@@ -62,12 +61,12 @@ public class UserService {
             throw new BusinessException(ErrorCode.INVALID_CURRENT_PASSWORD);
         }
 
-        String accessToken = jwtUtil.generateAccessToken(userEntity.getNickname());
+        String accessToken = jwtUtil.generateAccessToken(userEntity.getId(), userEntity.getNickname());
 
-        Optional<RefreshToken> refreshTokenOptional = refreshTokenRepository.findByNickname(userEntity.getNickname());
+        Optional<RefreshToken> refreshTokenOptional = refreshTokenRepository.findByIdAndNickname(userEntity.getId(), userEntity.getNickname());
 
         if (refreshTokenOptional.isEmpty()) {
-            String refreshToken = jwtUtil.generateRefreshToken(userEntity.getNickname());
+            String refreshToken = jwtUtil.generateRefreshToken(userEntity.getId());
 
             refreshTokenRepository.save(RefreshToken.create(dto.getNickname(), refreshToken));
 
@@ -85,8 +84,9 @@ public class UserService {
             throw new BusinessException(ErrorCode.INVALID_REFRESH_TOKEN);
         }
 
+        Long userId = Long.valueOf(jwtUtil.extractUserId(refreshToken));
         String nickname = jwtUtil.extractNickname(refreshToken);
-        Optional<RefreshToken> refreshTokenOptional = refreshTokenRepository.findByNickname(nickname);
+        Optional<RefreshToken> refreshTokenOptional = refreshTokenRepository.findByIdAndNickname(userId, nickname);
 
         RefreshToken tokenForSaving = refreshTokenOptional.orElseThrow(
                 () -> new BusinessException(ErrorCode.REFRESH_TOKEN_NOT_FOUND)
@@ -96,7 +96,7 @@ public class UserService {
             throw new BusinessException(ErrorCode.INVALID_REFRESH_TOKEN);
         }
 
-        String newAccessToken = jwtUtil.generateAccessToken(nickname);
+        String newAccessToken = jwtUtil.generateAccessToken(userId, nickname);
         response.setHeader("Authorization", "Bearer " + newAccessToken);
     }
 
