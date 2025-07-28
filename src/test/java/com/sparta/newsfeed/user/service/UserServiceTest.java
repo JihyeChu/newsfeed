@@ -64,11 +64,13 @@ class UserServiceTest {
         String accessToken = "access-token";
         String refreshToken = "refresh-token";
 
+        Long userId = 1L;
+        when(userRepository.findById(userId)).thenReturn(Optional.of(userEntity));
         when(userRepository.findByNicknameAndDeletedAtNull(nickname)).thenReturn(Optional.of(userEntity));
         when(passwordEncoder.matches("rawPassword", "encodePassword")).thenReturn(true);
-        when(jwtUtil.generateAccessToken(nickname)).thenReturn(accessToken);
-        when(jwtUtil.generateRefreshToken(nickname)).thenReturn(refreshToken);
-        when(refreshTokenRepository.findByNickname(nickname)).thenReturn(Optional.empty());
+        when(jwtUtil.generateAccessToken(userId, nickname)).thenReturn(accessToken);
+        when(jwtUtil.generateRefreshToken(userId)).thenReturn(refreshToken);
+        when(refreshTokenRepository.findByIdAndNickname(userId, nickname)).thenReturn(Optional.empty());
 
         Cookie mockRefreshCookie = new Cookie("Refresh-jwt", refreshToken);
         when(jwtUtil.generateRefreshJwtCookie(refreshToken)).thenReturn(mockRefreshCookie);
@@ -81,8 +83,8 @@ class UserServiceTest {
         // then
         verify(userRepository).findByNicknameAndDeletedAtNull(nickname);
         verify(passwordEncoder).matches("rawPassword", "encodePassword");
-        verify(jwtUtil).generateAccessToken(nickname);
-        verify(jwtUtil).generateRefreshToken(nickname);
+        verify(jwtUtil).generateAccessToken(userId, nickname);
+        verify(jwtUtil).generateRefreshToken(userId);
         verify(refreshTokenRepository).save(any(RefreshToken.class));
         verify(response).setHeader("Authorization", "Bearer " + accessToken);
         verify(response).addCookie(mockRefreshCookie);
