@@ -76,6 +76,8 @@ public class PostService {
         if (dto.getContent() != null) {
             postEntityForUpdate.changeContent(dto.getContent());
         }
+
+        searchClient.index(List.of(ResPostListDTO.of(postEntityForUpdate)));
     }
 
     @Transactional
