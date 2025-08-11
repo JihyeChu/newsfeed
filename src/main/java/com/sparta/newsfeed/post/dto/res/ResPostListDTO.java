@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Getter
 @Builder
@@ -18,6 +18,7 @@ public class ResPostListDTO {
     private String title;
     private String content;
     private String nickname;
+    private LocalDateTime createdAt;
 
     public static ResPostListDTO of(PostEntity postEntity) {
         return ResPostListDTO.builder()
@@ -25,6 +26,7 @@ public class ResPostListDTO {
                 .title(postEntity.getTitle())
                 .content(postEntity.getContent())
                 .nickname(postEntity.getUser().getNickname())
+                .createdAt(postEntity.getCreatedAt())
                 .build();
     }
 }
