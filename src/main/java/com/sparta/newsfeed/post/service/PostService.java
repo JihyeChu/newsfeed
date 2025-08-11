@@ -2,6 +2,7 @@ package com.sparta.newsfeed.post.service;
 
 import com.sparta.newsfeed.common.exception.BusinessException;
 import com.sparta.newsfeed.common.exception.ErrorCode;
+import com.sparta.newsfeed.post.client.SearchClient;
 import com.sparta.newsfeed.post.dto.req.ReqPostCreateDTO;
 import com.sparta.newsfeed.post.dto.req.ReqPostPatchDTO;
 import com.sparta.newsfeed.post.dto.res.ResPostListDTO;
@@ -28,6 +29,7 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final SearchClient searchClient;
 
     @Transactional
     public ResPostCreateDTO createPost(ReqPostCreateDTO dto, Long id) {
@@ -41,7 +43,10 @@ public class PostService {
                 userEntity
         );
 
-        return ResPostCreateDTO.of(postRepository.save(postEntityForSaving));
+        PostEntity savedPost = postRepository.save(postEntityForSaving);
+        searchClient.index(List.of(ResPostListDTO.of(postEntityForSaving)));
+
+        return ResPostCreateDTO.of(savedPost);
     }
 
     @Transactional(readOnly = true)
