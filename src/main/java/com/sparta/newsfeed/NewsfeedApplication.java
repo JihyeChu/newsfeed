@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
-@EnableFeignClients(basePackages = "com.sparta.newsfeed.post")
+@EnableFeignClients(basePackages = "com.sparta.newsfeed")
 public class NewsfeedApplication {
 
     public static void main(String[] args) {
