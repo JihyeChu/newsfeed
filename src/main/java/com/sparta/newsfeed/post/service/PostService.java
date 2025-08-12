@@ -91,5 +91,6 @@ public class PostService {
         }
 
         postEntityForDelete.markAsDeleted(postEntityForDelete.getUser().getNickname());
+        searchClient.index(List.of(ResPostListDTO.of(postEntityForDelete)));
     }
 }
