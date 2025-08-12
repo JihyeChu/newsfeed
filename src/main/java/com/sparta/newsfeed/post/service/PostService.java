@@ -61,7 +61,7 @@ public class PostService {
 
     @Transactional
     public void updatePost(@Valid ReqPostPatchDTO dto, Long id, Long userId) {
-        PostEntity postEntityForUpdate = postRepository.findById(id).orElseThrow(
+        PostEntity postEntityForUpdate = postRepository.findByIdAndIsDeletedFalse(id).orElseThrow(
                 () -> new BusinessException(ErrorCode.NOT_FOUND_POST)
         );
 

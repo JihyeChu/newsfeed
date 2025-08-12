@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<PostEntity, Long> {
 
@@ -19,4 +20,6 @@ public interface PostRepository extends JpaRepository<PostEntity, Long> {
             "join fetch p.user u " +
             "where p.deletedAt is null")
     List<PostEntity> findAllWithUser();
+
+    Optional<PostEntity> findByIdAndIsDeletedFalse(Long id);
 }
