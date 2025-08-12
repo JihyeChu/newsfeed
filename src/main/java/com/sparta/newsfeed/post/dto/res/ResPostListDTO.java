@@ -19,6 +19,7 @@ public class ResPostListDTO {
     private String content;
     private String nickname;
     private LocalDateTime createdAt;
+    private Boolean isDeleted;
 
     public static ResPostListDTO of(PostEntity postEntity) {
         return ResPostListDTO.builder()
@@ -27,6 +28,7 @@ public class ResPostListDTO {
                 .content(postEntity.getContent())
                 .nickname(postEntity.getUser().getNickname())
                 .createdAt(postEntity.getCreatedAt())
+                .isDeleted(postEntity.isDeleted())
                 .build();
     }
 }
